@@ -1,0 +1,40 @@
+{
+  "_comment": "C's requested additions to profile.schema.json. Kept in a SEPARATE file so B's frozen contract is never edited by C — B merges these in and this file shrinks to empty. The validator accepts these field paths so the build stays green, but warns on every one until they land in the real schema.",
+  "_requested_by": "C",
+  "_date": "2026-09-09",
+  "_blocking": "YES for nyc-ycm. Without founder.residing_in_sg and venture.project_duration_months, YCM cannot reach eligible_now and the readiness map loses its only green card — the demo drops from three states to two.",
+
+  "pending_fields": {
+    "founder.residing_in_sg": {
+      "json_schema": { "type": ["boolean", "null"] },
+      "type": "boolean",
+      "needed_by": ["nyc-ycm"],
+      "blocking_criterion": true,
+      "justification": "YCM requires applicants to be Singaporean/PR youths 'residing locally'. Citizenship alone does not establish residence — an SG citizen living abroad does not qualify, so this cannot be folded into founder.citizenship without inventing leniency the funder did not grant.",
+      "source": "https://www.nyc.gov.sg/programmes-grants/grants/young-changemakers/"
+    },
+    "venture.project_duration_months": {
+      "json_schema": { "type": ["integer", "null"], "minimum": 1 },
+      "type": "integer",
+      "needed_by": ["nyc-ycm"],
+      "blocking_criterion": true,
+      "justification": "YCM projects must be completed within 6 months of award. This is a genuine gate, and it is remediable — a founder can rescope — so it belongs in the rules rather than in the readiness panel.",
+      "source": "https://www.nyc.gov.sg/programmes-grants/grants/young-changemakers/"
+    },
+    "funding.can_match_capital_sgd": {
+      "json_schema": { "type": ["number", "null"], "minimum": 0 },
+      "type": "number",
+      "needed_by": ["startup-sg-founder"],
+      "blocking_criterion": false,
+      "justification": "Startup SG Founder is reported to require 1:1 co-matching capital. The criterion is deliberately NON-blocking because the ratio comes only from vendor blogs (docs/SOURCES.md) — so this field is nice-to-have, not demo-critical. Drop it if the schema is already frozen and reopening costs more than it is worth.",
+      "source": "docs/SOURCES.md — secondary sources only"
+    }
+  },
+
+  "naming_note": {
+    "field": "impact.sso_partnership",
+    "issue": "raiSE's published wording is VWO (Voluntary Welfare Organisation) / SSA (Social Service Agency). An SSO is a Social Service Office — a different kind of entity. CONTEXT.md §5 carries the same error, so this is inherited, not B's mistake.",
+    "recommendation": "DO NOT rename the field. It is frozen, A is already building against it, and a rename on Day 3 costs more than it buys. Fix the founder-facing LABEL to say 'Voluntary Welfare Organisation (VWO)' and leave the key alone. Rename after the hackathon.",
+    "impact_if_ignored": "We would say 'SSO partnership' on stage to judges who know the sector. The label fix is a one-line change in A's copy."
+  }
+}

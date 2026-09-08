@@ -42,7 +42,7 @@ const CASES = [
     name: "THE BIG ONE — blocking criterion with no remedy and no terminal flag",
     expect: "not marked terminal:true",
     mutate: (dir) => patchRule(dir, "raise-vfg-youth.json", (d) => {
-      const c = d.criteria.find((x) => x.field === "raise_member");
+      const c = d.criteria.find((x) => x.field === "memberships.raise_member");
       delete c.remedy; delete c.remedy_order;
     }),
   },
@@ -63,7 +63,7 @@ const CASES = [
     name: "prerequisite ordered after the step that depends on it",
     expect: "prerequisite must come first",
     mutate: (dir) => patchRule(dir, "raise-vfg-youth.json", (d) => {
-      d.criteria.find((x) => x.field === "is_incorporated").remedy_order = 9;
+      d.criteria.find((x) => x.field === "venture.incorporated").remedy_order = 9;
     }),
   },
   {
@@ -71,7 +71,7 @@ const CASES = [
     name: "any_of group mixing blocking and non-blocking members",
     expect: "mixes blocking and non-blocking",
     mutate: (dir) => patchRule(dir, "raise-vfg-youth.json", (d) => {
-      d.criteria.find((x) => x.field === "has_vwo_partnership").blocking = true;
+      d.criteria.find((x) => x.field === "impact.sso_partnership").blocking = true;
     }),
   },
   {
@@ -106,7 +106,7 @@ const CASES = [
     name: "DEMO DRIFT — a rules edit silently changes the persona's state",
     expect: "DEMO BROKEN",
     mutate: (dir) => patchRule(dir, "nyc-ycm.json", (d) => {
-      d.criteria.find((x) => x.field === "age").value = [15, 20]; // persona is 24
+      d.criteria.find((x) => x.field === "founder.age").value = [15, 20]; // persona is 24
     }),
   },
   {
@@ -114,7 +114,7 @@ const CASES = [
     name: "fixture field not in the vocabulary",
     expect: "unknown field",
     mutate: (dir) => patchJson(dir, join("fixtures", "demo-founder.json"), (d) => {
-      d.profile.favourite_colour = "blue";
+      d.answers.founder.favourite_colour = "blue";
     }),
   },
   {
@@ -122,7 +122,54 @@ const CASES = [
     name: "fixture field of the wrong type",
     expect: "should be integer",
     mutate: (dir) => patchJson(dir, join("fixtures", "demo-founder.json"), (d) => {
-      d.profile.age = "twenty-four";
+      d.answers.founder.age = "twenty-four";
+    }),
+  },
+  {
+    layer: "schema",
+    name: "a rule gating on access_needs — accessibility data must never decide eligibility",
+    expect: "no rule file may reference it",
+    mutate: (dir) => patchRule(dir, "nyc-ycm.json", (d) => {
+      d.criteria.push({
+        field: "founder.access_needs", op: "exists", value: true,
+        blocking: true, terminal: true,
+        requirement: "has declared access needs",
+        terminal_reason: "should never be reachable",
+      });
+    }),
+  },
+  {
+    layer: "schema",
+    name: "flat field name that ignores the schema's nesting",
+    expect: 'Did you mean "founder.age"',
+    mutate: (dir) => patchRule(dir, "nyc-ycm.json", (d) => { d.criteria[0].field = "age"; }),
+  },
+  {
+    layer: "schema",
+    name: "fixture missing a required top-level key",
+    expect: "missing required top-level key",
+    mutate: (dir) => patchJson(dir, join("fixtures", "demo-founder.json"), (d) => { delete d.field_meta; }),
+  },
+  {
+    layer: "schema",
+    name: "fixture pinned to the wrong profile_version",
+    expect: "schema pins",
+    mutate: (dir) => patchJson(dir, join("fixtures", "demo-founder.json"), (d) => { d.profile_version = "2.0.0"; }),
+  },
+  {
+    layer: "schema",
+    name: "field_meta pointing at a field that does not exist",
+    expect: "is not a known field",
+    mutate: (dir) => patchJson(dir, join("fixtures", "demo-founder.json"), (d) => {
+      d.field_meta["founder.nonexistent"] = { source: "FOUNDER", confirmed_by_founder: true, updated_at: "2026-09-09T09:00:00Z" };
+    }),
+  },
+  {
+    layer: "schema",
+    name: "invalid provenance source in field_meta",
+    expect: "is not a valid source",
+    mutate: (dir) => patchJson(dir, join("fixtures", "demo-founder.json"), (d) => {
+      d.field_meta["founder.age"].source = "VIBES";
     }),
   },
 ];

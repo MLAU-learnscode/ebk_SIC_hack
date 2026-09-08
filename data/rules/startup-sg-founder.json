@@ -8,17 +8,18 @@
   "confidence_note": "Eligibility criteria are consistent across all sources checked. The grant quantum and matching ratio were found ONLY on vendor blogs — Enterprise Singapore's own scheme page could not be reached at the URL tried. Do not quote a dollar figure on stage without a primary source. See docs/SOURCES.md.",
   "quantum_note": "Reported as S$20,000 to S$50,000 on a 1:1 matching basis, revised from 3:1 effective 1 April 2024. UNVERIFIED against a primary source — attribute, do not assert.",
   "stages_ref": null,
-
   "_notes": [
     "This grant is the demo's not_a_fit case, and it earns that state honestly: two of its criteria are irreversible. A founder who has previously incorporated cannot become a first-time entrepreneur again. Surfacing that in ninety seconds instead of after three weeks of paperwork is precisely problem P1.",
     "No criterion here depends on the grant quantum, so the unverified dollar figure cannot produce a wrong eligibility answer. It is display metadata only."
   ],
-
   "criteria": [
     {
-      "field": "citizenship",
+      "field": "founder.citizenship",
       "op": "in",
-      "value": ["SG", "PR"],
+      "value": [
+        "SG",
+        "PR"
+      ],
       "blocking": true,
       "terminal": true,
       "requirement": "Singapore citizen or Permanent Resident",
@@ -26,7 +27,7 @@
       "applies_at_stage": 1
     },
     {
-      "field": "first_time_entrepreneur",
+      "field": "founder.first_time_founder",
       "op": "eq",
       "value": true,
       "blocking": true,
@@ -36,7 +37,7 @@
       "applies_at_stage": 1
     },
     {
-      "field": "previously_incorporated",
+      "field": "founder.previously_incorporated",
       "op": "eq",
       "value": false,
       "blocking": true,
@@ -47,7 +48,7 @@
       "_rationale": "Distinct from is_incorporated. A founder can be currently unincorporated yet have incorporated before — that history still disqualifies. Collapsing the two fields would silently pass ineligible founders."
     },
     {
-      "field": "received_other_gov_funding",
+      "field": "funding.other_govt_funding",
       "op": "eq",
       "value": false,
       "blocking": true,
@@ -57,7 +58,7 @@
       "applies_at_stage": 1
     },
     {
-      "field": "equity_pct",
+      "field": "founder.equity_pct",
       "op": "gte",
       "value": 30,
       "blocking": true,
@@ -68,18 +69,19 @@
       "applies_at_stage": 1
     },
     {
-      "field": "has_amp_lor",
+      "field": "memberships.amp_relationship",
       "op": "eq",
-      "value": true,
+      "value": "LOR_ISSUED",
       "blocking": true,
       "requirement": "Requires a Letter of Recommendation from an Accredited Mentor Partner — applications do not go directly to Enterprise Singapore",
       "remedy": "Approach an Accredited Mentor Partner (17 in the first appointed batch, including NUS Enterprise, NTUitive, SMU IIE and ACE). The AMP screens for qualification, works with you to draw up a development plan with milestones, then recommends you to the agency.",
       "remedy_order": 2,
       "remedy_est_weeks": 6,
-      "applies_at_stage": 1
+      "applies_at_stage": 1,
+      "_rationale": "B's schema models this as an enum rather than the boolean C originally proposed, and the enum is better: IN_DISCUSSION is a real and common state. A founder mid-conversation with an AMP is not in the same position as one who has not started, and the UI can say so."
     },
     {
-      "field": "can_match_capital_sgd",
+      "field": "funding.can_match_capital_sgd",
       "op": "gt",
       "value": 0,
       "blocking": false,
@@ -91,7 +93,6 @@
       "_rationale": "blocking is FALSE because the matching ratio comes only from vendor blogs. Blocking a founder on an unverified figure would be exactly the kind of confident wrong answer this product exists to prevent. It surfaces as advice carrying its own uncertainty."
     }
   ],
-
   "warnings": [
     {
       "id": "ssgf-unverified-quantum",

@@ -3,7 +3,9 @@
 Read this before writing code that crosses a role boundary. It exists so the three
 branches merge without conflict and without anyone waiting on anyone.
 
-Status: **proposed by C, 2026-09-08.** B and A: react on the PR, then we freeze.
+Status: **live, updated 2026-09-09.** §1 is reconciled against B's shipped
+`profile.schema.json`. §2's amendments and §1's three pending fields still need B's
+sign-off.
 
 ---
 
@@ -23,7 +25,8 @@ under `/data` or `/fixtures/demo-founder.json`.
 | `src/screens/**`, `src/components/**` | A | — |
 | `src/lib/eligibility.ts` | B | A |
 | `src/lib/elicit.ts`, `draft.ts`, `acra.ts` | B | A |
-| `data/profile.schema.json` | **B** (fields proposed by C) | A, C |
+| `data/profile.schema.json` | **B** — shipped, committed verbatim | A, C |
+| `data/profile.fields.pending.json` | C — additions requested of B | B |
 | `data/rules/*.json` | C | B |
 | `data/stages.json` | C | A |
 | `data/schemas/*.mapping.json` | C | B |
@@ -41,38 +44,73 @@ concerns is `profile.schema.json` — see §1.
 ## 1. `profile.schema.json` — the spine
 
 This is the one genuinely shared artifact. A's screens write it, C's rules read it, B's
-drafting reads it. It is frozen end of Day 1 (non-negotiable #1) and changes after that
-need all three of us to agree in writing.
+drafting reads it. It is frozen (non-negotiable #1) and changes need all three of us to
+agree in writing.
 
-**Process:** C proposes the field vocabulary (below and in
-`data/profile.fields.proposal.json`), because C is the only one who knows what the grant
-criteria actually need. B formalises it into `profile.schema.json` with types and defaults,
-and freezes it. C then writes rules referencing only these field names.
+**Status: RESOLVED 2026-09-09.** B shipped `data/profile.schema.json` and it is committed
+here verbatim. C's earlier `profile.fields.proposal.json` is deleted — superseded, and
+keeping two vocabularies is exactly how they drift apart. **The validator now derives its
+field vocabulary from B's schema directly**, so a rule cannot reference a field the schema
+does not define.
 
-### Proposed fields
+B's schema is better than C's proposal in four places and was adopted wholesale:
+`is_key_applicant` (VFG requires the *key* applicant be SG/PR — C missed it),
+`amp_relationship` as an enum rather than a boolean (it captures `IN_DISCUSSION`, a real
+state a boolean would flatten), `access_needs` as an array instead of a crude
+`has_disability` flag, and `field_meta` — the provenance seam, which C had no equivalent for.
 
-Every field is nullable. `null` means "not yet asked" and is handled per §3.
+### How rules address fields
 
-| Field | Type | Required by | Notes |
+Rules use **dot-paths into `answers`**: `founder.age`, `venture.incorporated`,
+`memberships.raise_member`. The same key shape `field_meta` uses. C's rules were flat and
+have all been migrated.
+
+| C's original name | B's schema path | Note |
+|---|---|---|
+| `age` | `founder.age` | |
+| `citizenship` | `founder.citizenship` | |
+| `first_time_entrepreneur` | `founder.first_time_founder` | renamed |
+| `previously_incorporated` | `founder.previously_incorporated` | |
+| `equity_pct` | `founder.equity_pct` | |
+| `is_incorporated` | `venture.incorporated` | renamed |
+| `acra_uen` | `venture.uen` | renamed |
+| `raise_member` | `memberships.raise_member` | |
+| `has_amp_lor` (boolean) | `memberships.amp_relationship` (enum) | **type change** — `eq "LOR_ISSUED"` |
+| `has_vwo_partnership` | `impact.sso_partnership` | see naming note below |
+| `has_beneficiary_validation` | `impact.beneficiary_validation` | |
+| `received_other_gov_funding` | `funding.other_govt_funding` | renamed |
+| `social_need` | `venture.problem_statement` | |
+| `beneficiary_group` | `impact.beneficiary_group` | |
+| `has_disability` | `founder.access_needs` (array) | **never an eligibility input** |
+
+`founder.access_needs` is UI-only. The schema says no rule file may reference it, and the
+validator enforces that with a dedicated test — accessibility data must never gate a grant.
+
+### B: three fields C needs added
+
+Tracked in `data/profile.fields.pending.json` so C never edits your frozen file. The
+validator accepts them so the build stays green, and warns on every one until they land.
+
+| Field | Type | Needed by | Blocking? |
 |---|---|---|---|
-| `age` | integer | VFG Youth, YCM | |
-| `citizenship` | `"SG" \| "PR" \| "OTHER"` | VFG, YCM, SSGF | |
-| `residing_in_sg` | boolean | YCM | |
-| `is_incorporated` | boolean | VFG, SSGF | |
-| `acra_uen` | string | raiSE prereq | feeds `acra.ts` lookup |
-| `raise_member` | boolean | VFG | blocking |
-| `has_vwo_partnership` | boolean | VFG | unincorporated path (VWO, not SSO — see SOURCES.md) |
-| `has_beneficiary_validation` | boolean | VFG | unincorporated path |
-| `first_time_entrepreneur` | boolean | SSGF | |
-| `previously_incorporated` | boolean | SSGF | distinct from `is_incorporated` |
-| `equity_pct` | number | SSGF | ≥30 |
-| `received_other_gov_funding` | boolean | SSGF | see sequencing warning, §4 |
-| `has_amp_lor` | boolean | SSGF | |
-| `can_match_capital_sgd` | number | SSGF | 1:1 matching |
-| `project_duration_months` | integer | YCM | ≤6 |
-| `has_disability` | boolean | — | **routing and impact metrics only, never an eligibility criterion** |
-| `social_need` | string | drafting | free text from elicitation |
-| `beneficiary_group` | string | drafting | free text from elicitation |
+| `founder.residing_in_sg` | boolean | YCM | **yes** |
+| `venture.project_duration_months` | integer | YCM | **yes** |
+| `funding.can_match_capital_sgd` | number | Startup SG Founder | no — drop it if reopening the schema is expensive |
+
+The first two are demo-critical. YCM is the only grant the persona reaches `eligible_now`
+on, so without them the readiness map loses its green card and drops to two states. They
+did not appear in your draft because YCM is not in CONTEXT §5 — it came out of C's source
+verification on 8 Sep (`docs/SOURCES.md`).
+
+### Naming note — do not act on this before the pitch
+
+`impact.sso_partnership` should be `vwo_partnership`. raiSE's wording is VWO (Voluntary
+Welfare Organisation) / SSA; an SSO is a Social Service Office, a different kind of entity.
+CONTEXT §5 carries the same error, so it is inherited, not B's.
+
+**Recommendation: leave the key alone.** It is frozen, A is already building against it,
+and a rename on Day 3 costs more than it buys. Fix the founder-facing *label* to say
+"Voluntary Welfare Organisation (VWO)" and rename the key after the hackathon.
 
 ---
 
@@ -93,7 +131,7 @@ operator is a contract change requiring both of us.
 
 ```json
 {
-  "field": "raise_member",
+  "field": "memberships.raise_member",
   "op": "eq",
   "value": true,
   "blocking": true,
@@ -101,7 +139,7 @@ operator is a contract change requiring both of us.
   "remedy": "Apply for raiSE membership ($100, 4–8 weeks)",
   "remedy_order": 2,
   "remedy_est_weeks": 8,
-  "depends_on": ["is_incorporated"],
+  "depends_on": ["venture.incorporated"],
   "applies_at_stage": 3
 }
 ```
@@ -127,7 +165,7 @@ beyond help*. That is a wrong answer a real founder would act on.
 A dead end must now declare itself:
 
 ```json
-{ "field": "first_time_entrepreneur", "op": "eq", "value": true,
+{ "field": "founder.first_time_founder", "op": "eq", "value": true,
   "blocking": true, "terminal": true,
   "terminal_reason": "There is no action a founder can take to become a first-time entrepreneur again." }
 ```
@@ -142,9 +180,9 @@ unincorporated applicants. The closed operator set has no OR and no conditional,
 choice was to add these or to fudge the criteria — and CONTEXT §11 forbids fudging.
 
 ```json
-{ "field": "has_beneficiary_validation", "op": "eq", "value": true,
+{ "field": "impact.beneficiary_validation", "op": "eq", "value": true,
   "group": "vfg-unincorporated-evidence", "group_mode": "any_of",
-  "when": { "field": "is_incorporated", "op": "eq", "value": false } }
+  "when": { "field": "venture.incorporated", "op": "eq", "value": false } }
 ```
 
 Semantics: a criterion whose `when` guard does not hold is skipped entirely. A group passes
@@ -235,10 +273,10 @@ C's test cases assert against this. A renders it. B produces it.
   "source_url": "https://www.raise.sg/ventureforgood-grant/",
   "last_checked": "2026-09-08",
   "confidence": "secondary",
-  "satisfied":  [ { "field": "age", "requirement": "Aged 18–35" } ],
-  "blockers":   [ { "field": "raise_member", "requirement": "...", "remedy": "...",
+  "satisfied":  [ { "field": "founder.age", "requirement": "Aged 18–35" } ],
+  "blockers":   [ { "field": "memberships.raise_member", "requirement": "...", "remedy": "...",
                     "remedy_order": 2, "remedy_est_weeks": 8 } ],
-  "unknowns":   [ { "field": "has_vwo_partnership", "requirement": "..." } ],
+  "unknowns":   [ { "field": "impact.sso_partnership", "requirement": "..." } ],
   "warnings":   [ { "message": "...", "confirm_with_funder": true } ]
 }
 ```
@@ -271,8 +309,8 @@ still the sharpest thing in the demo.
 Shipped. B writes `eligibility.ts` until all of this passes:
 
 ```
-node scripts/validate-rules.mjs    # rules + fixture + 9 eligibility cases
-node scripts/test-validator.mjs    # 15 adversarial cases proving the validator has no holes
+node scripts/validate-rules.mjs    # rules + fixture + 10 eligibility cases
+node scripts/test-validator.mjs    # 21 adversarial cases proving the validator has no holes
 ```
 
 - **`fixtures/eligibility-cases.json`** — 9 expected outputs, each with a
@@ -289,13 +327,13 @@ reading a single rules file.
 
 ### The guard that protects the demo itself
 
-`fixtures/demo-founder.json` declares an `expected_states` block, and the validator
+`fixtures/demo-founder.json` declares an `_expected_states` block, and the validator
 asserts it. If anyone edits a rule in a way that changes what the persona sees, the build
 fails with `DEMO BROKEN` naming the grant and the drift.
 
 Without it, the failure mode is silent: someone tightens a criterion on Day 3, the
 readiness map quietly drops from three states to two, and nobody notices until the demo is
-on a projector. Do not "fix" a `DEMO BROKEN` failure by editing `expected_states` to match
+on a projector. Do not "fix" a `DEMO BROKEN` failure by editing `_expected_states` to match
 — work out why the result moved.
 
 ---

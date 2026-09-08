@@ -31,7 +31,8 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const RULES_DIR = join(ROOT, "data", "rules");
-const FIELDS_FILE = join(ROOT, "data", "profile.fields.proposal.json");
+const SCHEMA_FILE = join(ROOT, "data", "profile.schema.json");
+const PENDING_FILE = join(ROOT, "data", "profile.fields.pending.json");
 const FIXTURE_FILE = join(ROOT, "fixtures", "demo-founder.json");
 const STAGES_FILE = join(ROOT, "data", "stages.json");
 
@@ -56,20 +57,56 @@ const readJson = (path) => {
 
 // ---------------------------------------------------------------- load inputs
 
-if (!existsSync(FIELDS_FILE)) {
-  console.error(`FATAL: ${FIELDS_FILE} missing. It defines the field vocabulary every rule is checked against.`);
+if (!existsSync(SCHEMA_FILE)) {
+  console.error(`FATAL: ${SCHEMA_FILE} missing. B owns it; it is the vocabulary every rule is checked against.`);
   process.exit(2);
 }
-const fieldsDoc = readJson(FIELDS_FILE);
-const KNOWN_FIELDS = new Set(Object.keys(fieldsDoc?.fields ?? {}));
-const FIELD_TYPES = Object.fromEntries(
-  Object.entries(fieldsDoc?.fields ?? {}).map(([k, v]) => [k, v.type]),
-);
+const schemaDoc = readJson(SCHEMA_FILE);
+
+/**
+ * Derive the field vocabulary from B's frozen schema rather than restating it.
+ * Rules address fields by dot-path into `answers`, e.g. "founder.age". Restating the
+ * vocabulary in a second file is how the two drift apart without anyone noticing.
+ */
+const FIELD_TYPES = {};
+const jsonTypeOf = (spec) => {
+  if (spec.enum) return "enum";
+  const t = Array.isArray(spec.type) ? spec.type.find((x) => x !== "null") : spec.type;
+  return t ?? "unknown";
+};
+for (const [group, groupSpec] of Object.entries(schemaDoc?.properties?.answers?.properties ?? {})) {
+  for (const [name, spec] of Object.entries(groupSpec?.properties ?? {})) {
+    FIELD_TYPES[`${group}.${name}`] = jsonTypeOf(spec);
+  }
+}
+const SCHEMA_FIELDS = new Set(Object.keys(FIELD_TYPES));
+
+// C's requested additions, tracked separately so B's frozen file is never edited by C.
+const PENDING = existsSync(PENDING_FILE) ? (readJson(PENDING_FILE)?.pending_fields ?? {}) : {};
+const PENDING_FIELDS = new Set(Object.keys(PENDING));
+for (const [path, spec] of Object.entries(PENDING)) {
+  if (SCHEMA_FIELDS.has(path)) {
+    warn("data/profile.fields.pending.json", `"${path}" is now in profile.schema.json — remove it from the pending file`);
+  } else {
+    FIELD_TYPES[path] = spec.type;
+    warn(
+      "data/profile.fields.pending.json",
+      `"${path}" is NOT yet in B's schema${spec.blocking_criterion ? " and backs a BLOCKING criterion" : ""}` +
+      `${spec.needed_by ? ` (needed by ${spec.needed_by.join(", ")})` : ""} — the demo depends on B merging it`,
+    );
+  }
+}
+
+const KNOWN_FIELDS = new Set([...SCHEMA_FIELDS, ...PENDING_FIELDS]);
 
 if (KNOWN_FIELDS.size === 0) {
-  console.error("FATAL: no fields defined. Every rule would validate against nothing.");
+  console.error("FATAL: no fields derived from the schema. Every rule would validate against nothing.");
   process.exit(2);
 }
+
+/** Resolve a dot-path like "founder.age" against a nested answers object. */
+const getPath = (answers, path) =>
+  path.split(".").reduce((o, k) => (o === null || o === undefined ? undefined : o[k]), answers);
 
 const stagesDoc = existsSync(STAGES_FILE) ? readJson(STAGES_FILE) : null;
 const KNOWN_STAGE_MODELS = new Set(Object.keys(stagesDoc?.stage_models ?? {}));
@@ -147,7 +184,10 @@ for (const file of ruleFiles) {
     // L1 structural
     if (!c.field) err(where, "missing field");
     else if (!KNOWN_FIELDS.has(c.field)) {
-      err(where, `unknown field "${c.field}" — not in profile.fields.proposal.json. A typo'd field reads as null and silently changes the answer.`);
+      const guess = [...KNOWN_FIELDS].find((k) => k.endsWith(`.${c.field}`));
+      err(where, `unknown field "${c.field}" — not in profile.schema.json. ` +
+        (guess ? `Did you mean "${guess}"? Rules address fields by dot-path into answers. ` : "") +
+        `A field that does not resolve reads as null and silently changes the answer.`);
     }
     if (!VALID_OPS.includes(c.op)) {
       err(where, `invalid op ${JSON.stringify(c.op)}; allowed: ${VALID_OPS.join(", ")}`);
@@ -264,7 +304,7 @@ function evaluate(profile, grant) {
   const satisfied = [], blockers = [], unknowns = [];
   const guardHolds = (when) => {
     if (!when) return true;
-    const v = profile[when.field];
+    const v = getPath(profile, when.field);
     return v === null || v === undefined ? false : compare(v, when.op, when.value) === true;
   };
 
@@ -308,7 +348,7 @@ function evaluate(profile, grant) {
 }
 
 function evalCriterion(profile, c) {
-  const v = profile[c.field];
+  const v = getPath(profile, c.field);
   if (c.op === "exists") return (v !== null && v !== undefined) === c.value;
   if (v === null || v === undefined) return null; // unknown, not failure
   return compare(v, c.op, c.value);
@@ -351,21 +391,90 @@ function checkValueShape(where, op, value) {
 }
 
 // Assert the demo still produces the states the pitch is built on.
+/** Flatten a nested answers object into [dotPath, value] pairs. */
+function flattenAnswers(answers) {
+  const out = [];
+  for (const [group, fields] of Object.entries(answers ?? {})) {
+    if (fields === null || typeof fields !== "object" || Array.isArray(fields)) {
+      out.push([group, fields]);
+      continue;
+    }
+    for (const [name, value] of Object.entries(fields)) out.push([`${group}.${name}`, value]);
+  }
+  return out;
+}
+
+/** Type-check a value against the vocabulary derived from B's schema. */
+function checkFieldTypes(where, answers) {
+  for (const [path, value] of flattenAnswers(answers)) {
+    if (!KNOWN_FIELDS.has(path)) {
+      err(where, `unknown field "${path}" — not in profile.schema.json. The engine would read it as null.`);
+    } else if (value !== null && value !== undefined) {
+      const want = FIELD_TYPES[path];
+      const actual = Array.isArray(value) ? "array" : typeof value;
+      const ok = want === "integer" ? Number.isInteger(value)
+        : want === "enum" ? actual === "string"
+        : want === "array" ? actual === "array"
+        : want === actual;
+      if (!ok) err(where, `field "${path}" should be ${want}, got ${actual}`);
+    }
+  }
+}
+
 if (existsSync(FIXTURE_FILE)) {
   const fx = readJson(FIXTURE_FILE);
-  const profile = fx?.profile ?? {};
-  const expected = fx?.expected_states ?? {};
+  const profile = fx?.answers ?? {};
+  const expected = fx?._expected_states ?? {};
 
-  for (const key of Object.keys(profile)) {
-    if (!KNOWN_FIELDS.has(key)) {
-      err("fixtures/demo-founder.json", `profile has unknown field "${key}" — it would be ignored by the engine and read as null`);
-    } else if (profile[key] !== null) {
-      const expectedType = FIELD_TYPES[key];
-      const actual = Array.isArray(profile[key]) ? "array" : typeof profile[key];
-      const ok = expectedType === "integer" ? Number.isInteger(profile[key])
-        : expectedType === "enum" ? actual === "string"
-        : expectedType === actual;
-      if (!ok) err("fixtures/demo-founder.json", `field "${key}" should be ${expectedType}, got ${actual}`);
+  // The fixture must be a valid FounderProfile, not a convenient approximation of one —
+  // A loads it directly, so a shape A cannot consume is a broken demo, not a lint warning.
+  for (const key of schemaDoc?.required ?? []) {
+    if (fx?.[key] === undefined) err("fixtures/demo-founder.json", `missing required top-level key "${key}" (profile.schema.json)`);
+  }
+  const allowedTop = new Set(Object.keys(schemaDoc?.properties ?? {}));
+  for (const key of Object.keys(fx ?? {})) {
+    if (!key.startsWith("_") && !allowedTop.has(key)) {
+      err("fixtures/demo-founder.json", `top-level key "${key}" is not in the schema, which sets additionalProperties:false`);
+    }
+  }
+  const wantVersion = schemaDoc?.properties?.profile_version?.const;
+  if (wantVersion && fx?.profile_version !== wantVersion) {
+    err("fixtures/demo-founder.json", `profile_version "${fx?.profile_version}" but schema pins "${wantVersion}"`);
+  }
+  for (const group of schemaDoc?.properties?.answers?.required ?? []) {
+    if (profile[group] === undefined) err("fixtures/demo-founder.json", `answers is missing required group "${group}"`);
+  }
+
+  checkFieldTypes("fixtures/demo-founder.json", profile);
+
+  // field_meta is the provenance seam. A key that names a field we do not have is a flag
+  // pointing at nothing; a field carrying an AI-supplied value with no entry shows up
+  // unflagged, which is the guardrail in CONTEXT §4 failing silently.
+  for (const path of Object.keys(fx?.field_meta ?? {})) {
+    if (path.startsWith("_")) continue;
+    if (!KNOWN_FIELDS.has(path)) {
+      err("fixtures/demo-founder.json", `field_meta key "${path}" is not a known field`);
+    }
+    const meta = fx.field_meta[path];
+    for (const req of ["source", "confirmed_by_founder", "updated_at"]) {
+      if (meta?.[req] === undefined) err("fixtures/demo-founder.json", `field_meta["${path}"] missing required "${req}"`);
+    }
+    if (meta?.source && !["FOUNDER", "AI_EXTRACTED", "AI_ESTIMATED", "ACRA", "DEFAULT"].includes(meta.source)) {
+      err("fixtures/demo-founder.json", `field_meta["${path}"].source "${meta.source}" is not a valid source`);
+    }
+  }
+  for (const [path, value] of flattenAnswers(profile)) {
+    if (value !== null && value !== undefined && fx?.field_meta?.[path] === undefined) {
+      warn("fixtures/demo-founder.json", `"${path}" has a value but no field_meta entry — A treats unknown provenance as needing a gap flag`);
+    }
+  }
+
+  // Rules must not read a field the schema marks as never-an-eligibility-input.
+  for (const g of grants) {
+    for (const c of g.criteria) {
+      if (c.field === "founder.access_needs") {
+        err(`data/rules/${g.grant_id}.json`, "reads founder.access_needs — the schema states no rule file may reference it. Access needs drive UI affordances and must never gate a grant.");
+      }
     }
   }
 
@@ -377,7 +486,7 @@ if (existsSync(FIXTURE_FILE)) {
     }
     const grant = grants.find((g) => g.grant_id === grantId);
     if (!grant) {
-      err("fixtures/demo-founder.json", `expected_states names "${grantId}" but no such rules file exists`);
+      err("fixtures/demo-founder.json", `_expected_states names "${grantId}" but no such rules file exists`);
       continue;
     }
     const got = evaluate(profile, grant);
@@ -412,17 +521,15 @@ if (existsSync(CASES_FILE)) {
   const casesDoc = readJson(CASES_FILE);
   caseCount = (casesDoc?.cases ?? []).length;
   if (caseCount === 0) warn("fixtures/eligibility-cases.json", "no cases — B has nothing to code against");
-  const demoProfile = existsSync(FIXTURE_FILE) ? (readJson(FIXTURE_FILE)?.profile ?? {}) : {};
+  const demoProfile = existsSync(FIXTURE_FILE) ? (readJson(FIXTURE_FILE)?.answers ?? {}) : {};
 
   for (const [i, tc] of (casesDoc?.cases ?? []).entries()) {
     const where = `fixtures/eligibility-cases.json cases[${i}] "${tc.name ?? "unnamed"}"`;
     const grant = grants.find((g) => g.grant_id === tc.grant_id);
     if (!grant) { err(where, `no rules file for grant_id "${tc.grant_id}"`); continue; }
 
-    const profile = tc.profile_ref === "demo-founder" ? demoProfile : (tc.profile ?? {});
-    for (const key of Object.keys(profile)) {
-      if (!KNOWN_FIELDS.has(key)) err(where, `profile has unknown field "${key}"`);
-    }
+    const profile = tc.profile_ref === "demo-founder" ? demoProfile : (tc.answers ?? {});
+    checkFieldTypes(where, profile);
 
     const got = evaluate(profile, grant);
     const want = tc.expect ?? {};
