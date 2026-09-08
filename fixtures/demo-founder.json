@@ -1,0 +1,56 @@
+{
+  "_comment": "The demo persona. CONTEXT §9 requires three grants in three different states on the readiness map; this profile is tuned to produce exactly that. Owned by C, consumed by A (screens) and B (drafting). A builds against this from hour one and is never blocked on B.",
+
+  "persona": {
+    "name": "Ren",
+    "one_line": "24, visually impaired, wants to turn a peer-support group for newly-diagnosed young adults into a paid training service for employers.",
+    "narrative": "Ren has run the peer-support group informally for two years and has real beneficiary relationships. They incorporated a small tutoring business at 19 that never traded and was struck off. They have never applied for funding, have no pitch deck, no ACRA profile, and no financial projections. They do not know that the tutoring company still counts against them.",
+    "why_this_persona": "They sit exactly on the wedge in CONTEXT §2 — 18-35, disabled, pre-incorporation, never applied. And they carry one piece of invisible history that silently closes a door, which is problem P1 in a single human detail."
+  },
+
+  "expected_states": {
+    "_comment": "ASSERTED BY scripts/validate-rules.mjs. If a rules edit changes any of these, the check fails loudly at build time instead of the demo quietly losing a state on stage. Do not update these to match a broken result — work out why the result changed.",
+    "nyc-ycm": "eligible_now",
+    "raise-vfg-youth": "eligible_after_steps",
+    "startup-sg-founder": "not_a_fit"
+  },
+
+  "profile": {
+    "age": 24,
+    "citizenship": "SG",
+    "residing_in_sg": true,
+
+    "is_incorporated": false,
+    "acra_uen": null,
+    "raise_member": false,
+
+    "has_vwo_partnership": false,
+    "has_beneficiary_validation": true,
+
+    "first_time_entrepreneur": false,
+    "previously_incorporated": true,
+    "equity_pct": 100,
+    "received_other_gov_funding": false,
+    "has_amp_lor": false,
+    "can_match_capital_sgd": 0,
+
+    "project_duration_months": 6,
+
+    "has_disability": true,
+
+    "social_need": "Young adults newly diagnosed with degenerative sight loss drop out of work and study within the first year, before any support scheme reaches them.",
+    "beneficiary_group": "Singaporeans aged 18 to 30 in the first year after a sight-loss diagnosis."
+  },
+
+  "_state_derivation": {
+    "_comment": "Why each state falls out, so anyone can check the demo is telling the truth rather than trusting the fixture.",
+    "nyc-ycm": "age 24 in [15,35] ✓ · citizenship SG ✓ · residing_in_sg true ✓ · project_duration_months 6 ≤ 6 ✓. No blockers, no unknowns → eligible_now. The forward-looking sequencing warning fires because received_other_gov_funding is false.",
+    "raise-vfg-youth": "age 24 in [18,35] ✓ · citizenship SG ✓ · is_incorporated false ✗ (remedy 1, ACRA) · raise_member false ✗ (remedy 2, depends on remedy 1) → eligible_after_steps with an ordered two-step chain. The unincorporated-evidence group passes on has_beneficiary_validation, so the founder sees credit for work already done rather than an undifferentiated wall.",
+    "startup-sg-founder": "first_time_entrepreneur false and previously_incorporated true — both terminal, no remedy exists → not_a_fit. equity_pct 100 ✓ and citizenship ✓ still render as satisfied, because showing what someone DOES have is the point of the map."
+  },
+
+  "_do_not": [
+    "Do not add a field here that is absent from data/profile.fields.proposal.json — the validator rejects it, because a typo'd field name reads as null and silently changes an eligibility answer.",
+    "Do not tune this profile to make a demo beat land better without updating _state_derivation. A fixture that no longer explains itself is how a wrong claim reaches a stage."
+  ]
+}

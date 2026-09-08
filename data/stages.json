@@ -1,0 +1,65 @@
+{
+  "_comment": "Stage models for vertical progression (CONTEXT §3, P2b). This is the axis no competitor covers: the same venture retold at growing depth to ONE funder over months. Referenced by rules files via stages_ref.",
+  "last_checked": "2026-09-08",
+
+  "stage_models": {
+    "raise-vfg": {
+      "name": "raiSE VentureForGood",
+      "source_url": "https://www.raise.sg/ventureforgood-grant/",
+      "confidence": "primary",
+      "total_duration_note": "Roughly 4 to 6 months from application to disbursement, using raiSE's own stated per-stage durations.",
+      "documents_to_start": [
+        "Pitch deck",
+        "ACRA profile",
+        "Management accounts up to 2 years (if applicable)",
+        "Financial projections of at least 2 years",
+        "Founding team resumes"
+      ],
+      "stages": [
+        {
+          "n": 1,
+          "name": "Submit application",
+          "what_you_send": "Pitch deck and management accounts, by email",
+          "duration_weeks": 3,
+          "depth": "summary",
+          "gates_on": []
+        },
+        {
+          "n": 2,
+          "name": "First meeting",
+          "what_you_send": "One-on-one discussion with a portfolio manager",
+          "duration_weeks": 3,
+          "depth": "conversation",
+          "gates_on": []
+        },
+        {
+          "n": 3,
+          "name": "Shortlisting",
+          "what_you_send": "Nothing new — raiSE decides",
+          "duration_weeks": 3,
+          "depth": "none",
+          "gates_on": ["raise_member"],
+          "note": "Only raiSE members proceed past this point. This is the stage that quietly ends most pre-incorporation applications, and the reason the ACRA-then-membership chain has to start months earlier."
+        },
+        {
+          "n": 4,
+          "name": "Final evaluation",
+          "what_you_send": "Detailed proposal and financial projections aligned to social impact milestones",
+          "duration_weeks": 8,
+          "duration_weeks_min": 4,
+          "depth": "detailed",
+          "gates_on": []
+        },
+        {
+          "n": 5,
+          "name": "Pitching to the Evaluation Committee",
+          "what_you_send": "Live pitch",
+          "duration_weeks": 8,
+          "duration_weeks_min": 4,
+          "depth": "presentation",
+          "gates_on": []
+        }
+      ]
+    }
+  }
+}

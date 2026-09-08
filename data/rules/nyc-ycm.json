@@ -1,0 +1,71 @@
+{
+  "grant_id": "nyc-ycm",
+  "name": "Young ChangeMakers (YCM)",
+  "funder": "National Youth Council",
+  "source_url": "https://www.nyc.gov.sg/programmes-grants/grants/young-changemakers/",
+  "last_checked": "2026-09-08",
+  "confidence": "secondary",
+  "confidence_note": "Criteria are consistent across NYC and government partner pages but are published in a factsheet PDF rather than inline on nyc.gov.sg. UI must show the 'according to published grant guidance' qualifier. See docs/SOURCES.md.",
+  "quantum_note": "Up to $3,000, or up to 80% of supported cost, whichever is lower. Projects of exceeding merit up to $5,000 at 80%.",
+  "stages_ref": null,
+
+  "_notes": [
+    "This grant is deliberately the simplest in the set: no incorporation requirement, no membership requirement, no mentor gate. That is why a pre-incorporation founder reaches eligible_now here and nowhere else.",
+    "Group applications require a majority of members to be Singaporean/PR youths. Not encoded: the MVP models an individual founder and we have no group-composition field. Do not silently approximate it."
+  ],
+
+  "criteria": [
+    {
+      "field": "age",
+      "op": "between",
+      "value": [15, 35],
+      "blocking": true,
+      "terminal": true,
+      "requirement": "Aged 15 to 35",
+      "terminal_reason": "Age cannot be remedied by any action the founder can take."
+    },
+    {
+      "field": "citizenship",
+      "op": "in",
+      "value": ["SG", "PR"],
+      "blocking": true,
+      "terminal": true,
+      "requirement": "Singapore citizen or Permanent Resident",
+      "terminal_reason": "Citizenship status is outside the scope of anything this product can advise on."
+    },
+    {
+      "field": "residing_in_sg",
+      "op": "eq",
+      "value": true,
+      "blocking": true,
+      "terminal": true,
+      "requirement": "Residing in Singapore",
+      "terminal_reason": "Residency is a factual precondition, not a paperwork step."
+    },
+    {
+      "field": "project_duration_months",
+      "op": "lte",
+      "value": 6,
+      "blocking": true,
+      "requirement": "Project must be completed within 6 months of the grant award",
+      "remedy": "Scope the project so it can be delivered within 6 months, or split it into a first phase that can.",
+      "remedy_order": 1,
+      "remedy_est_weeks": 0
+    }
+  ],
+
+  "warnings": [
+    {
+      "id": "ycm-then-ssgf-sequencing",
+      "message": "Startup SG Founder requires that your business concept has not received other government funding. YCM is a government grant, so accepting it may affect a later Startup SG Founder application. This is our reading of the published criteria, not a confirmed ruling — check with both NYC and Enterprise Singapore before you accept.",
+      "confirm_with_funder": true,
+      "related_grant_id": "startup-sg-founder",
+      "when": {
+        "field": "received_other_gov_funding",
+        "op": "eq",
+        "value": false
+      },
+      "_rationale": "Placed on YCM rather than on Startup SG Founder deliberately: the warning is only actionable at the moment the founder is about to accept the smaller grant. By the time they read the Startup SG Founder card, the decision is already made. This forward-looking placement is the whole point of holding one profile across many funders."
+    }
+  ]
+}

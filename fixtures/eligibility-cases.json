@@ -1,0 +1,121 @@
+{
+  "_comment": "Expected outputs for src/lib/eligibility.ts. B codes against these; C owns them. This is how C owns correctness without opening B's file (INTERFACE_CONTRACT.md §5). Run by scripts/validate-rules.mjs against the reference evaluator.",
+
+  "cases": [
+    {
+      "name": "COLD START — an empty profile must not render everything red or everything green",
+      "why_it_matters": "This is the product's entire premise: the founder arrives with nothing. If null reads as failure, every grant shows as rejected and the founder leaves. If null reads as pass, we promise eligibility we cannot support and lose the soundness claim. Neither is acceptable, which is why unknowns are a separate bucket from blockers.",
+      "profile": {},
+      "grant_id": "nyc-ycm",
+      "expect": {
+        "state": "eligible_after_steps",
+        "unknown_fields": ["age", "citizenship", "residing_in_sg", "project_duration_months"],
+        "blocker_fields": []
+      }
+    },
+    {
+      "name": "Demo persona — YCM is the clean green card",
+      "profile_ref": "demo-founder",
+      "grant_id": "nyc-ycm",
+      "expect": { "state": "eligible_now", "blocker_fields": [], "unknown_fields": [] }
+    },
+    {
+      "name": "Demo persona — VFG shows the sourced two-step chain, in order",
+      "why_it_matters": "The hero screen. ACRA registration must be step 1 and raiSE membership step 2, because raiSE will not accept an unregistered business. Reversing them tells the founder to do something impossible.",
+      "profile_ref": "demo-founder",
+      "grant_id": "raise-vfg-youth",
+      "expect": {
+        "state": "eligible_after_steps",
+        "blocker_fields": ["is_incorporated", "raise_member"],
+        "first_remedy_order": 1,
+        "blockers_in_order": ["is_incorporated", "raise_member"]
+      }
+    },
+    {
+      "name": "Demo persona — Startup SG Founder is a genuine dead end",
+      "why_it_matters": "Two terminal criteria. The founder incorporated once at 19 and cannot un-incorporate. Showing this in ninety seconds rather than after three weeks of paperwork is problem P1 in one screen.",
+      "profile_ref": "demo-founder",
+      "grant_id": "startup-sg-founder",
+      "expect": {
+        "state": "not_a_fit",
+        "blocker_fields": ["first_time_entrepreneur", "previously_incorporated", "has_amp_lor"],
+        "has_terminal_blocker": true,
+        "satisfied_not_empty": true
+      }
+    },
+    {
+      "name": "A true first-timer reaches Startup SG Founder with remediable steps only",
+      "why_it_matters": "Proves not_a_fit above comes from the persona's history and not from the rules being unreachable.",
+      "profile": {
+        "citizenship": "SG",
+        "first_time_entrepreneur": true,
+        "previously_incorporated": false,
+        "received_other_gov_funding": false,
+        "equity_pct": 100,
+        "has_amp_lor": false,
+        "can_match_capital_sgd": 20000
+      },
+      "grant_id": "startup-sg-founder",
+      "expect": {
+        "state": "eligible_after_steps",
+        "blocker_fields": ["has_amp_lor"],
+        "has_terminal_blocker": false
+      }
+    },
+    {
+      "name": "An incorporated raiSE member clears VFG outright",
+      "why_it_matters": "Proves the remedy chain resolves — a founder who completes both steps actually arrives at eligible_now, rather than being stuck behind a rule that can never be satisfied.",
+      "profile": {
+        "age": 29,
+        "citizenship": "PR",
+        "is_incorporated": true,
+        "raise_member": true
+      },
+      "grant_id": "raise-vfg-youth",
+      "expect": { "state": "eligible_now", "blocker_fields": [], "unknown_fields": [] }
+    },
+    {
+      "name": "Age outside the band is terminal, not a step",
+      "why_it_matters": "There is no remedy for being 41. Offering one would be a lie, and offering none without saying why is how an omission gets mistaken for a judgement.",
+      "profile": { "age": 41, "citizenship": "SG", "is_incorporated": true, "raise_member": true },
+      "grant_id": "raise-vfg-youth",
+      "expect": {
+        "state": "not_a_fit",
+        "blocker_fields": ["age"],
+        "has_terminal_blocker": true
+      }
+    },
+    {
+      "name": "The unincorporated-evidence group passes on either limb",
+      "why_it_matters": "raiSE's wording is 'VWO partnership and/or beneficiary validation'. A founder with only one of the two must not be told they are short.",
+      "profile": {
+        "age": 24,
+        "citizenship": "SG",
+        "is_incorporated": false,
+        "raise_member": true,
+        "has_vwo_partnership": false,
+        "has_beneficiary_validation": true
+      },
+      "grant_id": "raise-vfg-youth",
+      "expect": {
+        "state": "eligible_after_steps",
+        "blocker_fields": ["is_incorporated"],
+        "group_satisfied": "vfg-unincorporated-evidence"
+      }
+    },
+    {
+      "name": "The when-guard skips the evidence group entirely once incorporated",
+      "why_it_matters": "An incorporated founder should never be asked for unincorporated-applicant evidence. A guard that fails open would clutter the map with irrelevant asks.",
+      "profile": {
+        "age": 24,
+        "citizenship": "SG",
+        "is_incorporated": true,
+        "raise_member": true,
+        "has_vwo_partnership": false,
+        "has_beneficiary_validation": false
+      },
+      "grant_id": "raise-vfg-youth",
+      "expect": { "state": "eligible_now", "blocker_fields": [], "unknown_fields": [] }
+    }
+  ]
+}

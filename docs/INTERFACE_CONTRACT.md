@@ -98,19 +98,75 @@ operator is a contract change requiring both of us.
   "value": true,
   "blocking": true,
   "requirement": "Must be a raiSE member",
-  "remedy": "Register the business with ACRA, then apply for raiSE membership ($100, 4–8 weeks)",
+  "remedy": "Apply for raiSE membership ($100, 4–8 weeks)",
   "remedy_order": 2,
   "remedy_est_weeks": 8,
-  "depends_on": ["is_incorporated"]
+  "depends_on": ["is_incorporated"],
+  "applies_at_stage": 3
 }
 ```
 
 - `blocking: true` → failing it puts the grant in `eligible_after_steps` (remediable) or
-  `not_a_fit` (no `remedy` given).
+  `not_a_fit` (see `terminal` below).
 - `blocking: false` → advisory only; surfaces as a warning, never changes state.
 - `remedy_order` sequences the steps a founder must take. **This is the product.**
 - `depends_on` lets C express that a remedy is gated on another field, so B can order the
   chain correctly rather than showing steps that can't be started yet.
+
+### Amendments — B, these came out of encoding the real criteria
+
+Writing the three grant files exposed three gaps in the shape above. All are implemented
+in the reference evaluator in `scripts/validate-rules.mjs` and enforced by the validator.
+
+**1. `terminal` + `terminal_reason` — required, and the most important line in this file.**
+
+A blocking criterion with no `remedy` silently means `not_a_fit`: permanently
+disqualified. So *forgetting to write a remedy* looks identical to *deciding someone is
+beyond help*. That is a wrong answer a real founder would act on.
+
+A dead end must now declare itself:
+
+```json
+{ "field": "first_time_entrepreneur", "op": "eq", "value": true,
+  "blocking": true, "terminal": true,
+  "terminal_reason": "There is no action a founder can take to become a first-time entrepreneur again." }
+```
+
+The validator rejects any blocking criterion that has neither a `remedy` nor
+`terminal: true`. Omission can no longer masquerade as judgement.
+
+**2. `when` guard + `group` / `group_mode: "any_of"` — needed for real criteria.**
+
+raiSE's rule is "VWO partnership **and/or** beneficiary validation", and it only applies to
+unincorporated applicants. The closed operator set has no OR and no conditional, so the
+choice was to add these or to fudge the criteria — and CONTEXT §11 forbids fudging.
+
+```json
+{ "field": "has_beneficiary_validation", "op": "eq", "value": true,
+  "group": "vfg-unincorporated-evidence", "group_mode": "any_of",
+  "when": { "field": "is_incorporated", "op": "eq", "value": false } }
+```
+
+Semantics: a criterion whose `when` guard does not hold is skipped entirely. A group passes
+if any member passes; it is unknown if none pass and any is unknown. The validator rejects
+groups that mix blocking and non-blocking members or that carry differing guards, because
+either makes the group's effect on state ambiguous.
+
+**3. `applies_at_stage` — advisory, safe to ignore in the MVP.**
+
+VFG genuinely accepts unincorporated applicants at stage 1; the raiSE membership gate bites
+at stage 3 (shortlisting). Marking ACRA registration as a flat requirement would be wrong,
+and a sector-literate judge would catch it.
+
+**You can ship v1 ignoring this field.** Treating every criterion as applying now is
+strictly more conservative — it surfaces a real requirement early rather than inventing one.
+That is a safe degradation, not a bug. It is also the hook for the vertical-progression
+screen if there is time.
+
+### Grant-level `warnings`
+
+Grants carry a `warnings` array for non-blocking, cross-grant risks. Each has `message`,
+`confirm_with_funder`, an optional `related_grant_id`, and an optional `when` guard. See §4.
 
 ### Grant file shape
 
@@ -160,6 +216,11 @@ incompleteness.
 **B: if you disagree, say so on the PR before you write the function.** This is the one
 decision that is expensive to change later.
 
+**Implemented and proven.** `fixtures/eligibility-cases.json` case 1 is the cold-start
+assertion: an empty `{}` profile against YCM must yield `eligible_after_steps` with four
+unknowns and **zero** blockers. Run `node scripts/validate-rules.mjs` to see it hold. If
+your implementation renders an empty profile as all-red or all-green, that case fails.
+
 ---
 
 ## 4. Result shape — what `eligibility.ts` returns
@@ -207,25 +268,35 @@ still the sharpest thing in the demo.
 
 ## 5. How C unblocks B without touching B's file
 
-C ships `fixtures/eligibility-cases.json` — a table of expected outputs. B writes
-`eligibility.ts` until every case passes.
+Shipped. B writes `eligibility.ts` until all of this passes:
 
-```json
-[
-  {
-    "name": "pre-incorporation disabled youth founder → VFG needs ACRA then raiSE",
-    "profile": { "age": 24, "citizenship": "SG", "is_incorporated": false,
-                 "raise_member": false },
-    "grant_id": "raise-vfg-youth",
-    "expect": { "state": "eligible_after_steps",
-                "blocker_fields": ["is_incorporated", "raise_member"],
-                "first_remedy_order": 1 }
-  }
-]
+```
+node scripts/validate-rules.mjs    # rules + fixture + 9 eligibility cases
+node scripts/test-validator.mjs    # 15 adversarial cases proving the validator has no holes
 ```
 
-This is how C owns correctness without owning the file, and it means B can start before
-the full rules set exists.
+- **`fixtures/eligibility-cases.json`** — 9 expected outputs, each with a
+  `why_it_matters` note. Covers cold start, the ordered remedy chain, terminal dead ends,
+  both limbs of the `any_of` group, and the `when` guard skipping a group entirely.
+- **`scripts/validate-rules.mjs`** contains a **reference evaluator**. It is *not* the
+  product implementation and **B must not import it** — it exists so C can assert the demo
+  still holds, and so you have an executable spec to diff against. If your implementation
+  and the reference disagree, one of us is wrong and we want to know here rather than on
+  stage.
+
+This is how C owns correctness without owning your file, and it means you can start before
+reading a single rules file.
+
+### The guard that protects the demo itself
+
+`fixtures/demo-founder.json` declares an `expected_states` block, and the validator
+asserts it. If anyone edits a rule in a way that changes what the persona sees, the build
+fails with `DEMO BROKEN` naming the grant and the drift.
+
+Without it, the failure mode is silent: someone tightens a criterion on Day 3, the
+readiness map quietly drops from three states to two, and nobody notices until the demo is
+on a projector. Do not "fix" a `DEMO BROKEN` failure by editing `expected_states` to match
+— work out why the result moved.
 
 ---
 

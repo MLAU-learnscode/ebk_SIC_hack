@@ -9,6 +9,20 @@ of truth for what we're building, the roles, the schedule, and the rules everyon
 See [VERSION_CONTROL.md](./VERSION_CONTROL.md) for how the three of us branch, commit, and
 merge without stepping on each other during the 3-day build.
 
+## Checks
+
+No dependencies, no install. Run both before merging anything that touches `/data` or
+`/fixtures`:
+
+```
+node scripts/validate-rules.mjs    # rules, fixture and eligibility cases
+node scripts/test-validator.mjs    # proves the validator itself has no holes
+```
+
+`validate-rules.mjs` fails the build if a grant rule loses its source, if a blocking
+criterion would silently disqualify someone with no stated reason, or if a rules edit
+changes what the demo persona sees. See [docs/INTERFACE_CONTRACT.md](./docs/INTERFACE_CONTRACT.md).
+
 ## Repo layout
 
 ```

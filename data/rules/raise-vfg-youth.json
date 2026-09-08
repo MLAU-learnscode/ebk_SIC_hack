@@ -1,0 +1,103 @@
+{
+  "grant_id": "raise-vfg-youth",
+  "name": "VentureForGood (Youth)",
+  "funder": "raiSE",
+  "source_url": "https://www.raise.sg/ventureforgood-grant/",
+  "supporting_source_urls": [
+    "https://www.raise.sg/become-a-member/"
+  ],
+  "last_checked": "2026-09-08",
+  "confidence": "secondary",
+  "confidence_note": "The five-stage process, required documents and the raiSE-membership gate are VERIFIED against raise.sg (primary). The youth-track age band and quantum are from secondary grant listings; raiSE's own youth page 404s. UI must qualify the quantum. See docs/SOURCES.md.",
+  "quantum_note": "Up to S$20,000 for the youth track, per published grant listings. NOT the $300,000 figure — that is the general VentureForGood track. Do not conflate these on stage.",
+  "stages_ref": "raise-vfg",
+
+  "_notes": [
+    "This is the hero grant for the demo. Its remedy chain is real and every link is sourced: raiSE membership requires an ACRA-registered business (raise.sg/become-a-member), and VFG stage 3 shortlisting passes only raiSE members (raise.sg/ventureforgood-grant). A pre-incorporation founder can therefore apply but cannot be shortlisted.",
+    "That distinction is why criteria carry applies_at_stage. VFG genuinely does accept unincorporated applicants at stage 1 — saying otherwise would be wrong and a sector-literate judge would catch it. The registration requirement bites at stage 3, not stage 1."
+  ],
+
+  "criteria": [
+    {
+      "field": "age",
+      "op": "between",
+      "value": [18, 35],
+      "blocking": true,
+      "terminal": true,
+      "requirement": "Aged 18 to 35",
+      "terminal_reason": "Age cannot be remedied by any action the founder can take.",
+      "applies_at_stage": 1
+    },
+    {
+      "field": "citizenship",
+      "op": "in",
+      "value": ["SG", "PR"],
+      "blocking": true,
+      "terminal": true,
+      "requirement": "Key applicant is a Singapore citizen or Permanent Resident",
+      "terminal_reason": "Citizenship status is outside the scope of anything this product can advise on.",
+      "applies_at_stage": 1
+    },
+    {
+      "field": "is_incorporated",
+      "op": "eq",
+      "value": true,
+      "blocking": true,
+      "requirement": "Business registered with ACRA (required in order to hold raiSE membership, not required to submit the initial application)",
+      "remedy": "Register the business with ACRA via BizFile.",
+      "remedy_order": 1,
+      "remedy_est_weeks": 1,
+      "applies_at_stage": 3,
+      "_rationale": "Not a VFG criterion in its own right — VFG accepts unincorporated applicants at stage 1. It is here because it is a hard prerequisite of raiSE membership, which IS a VFG criterion at stage 3. Encoding it as a step rather than a gate is what makes the ordered remedy chain truthful."
+    },
+    {
+      "field": "raise_member",
+      "op": "eq",
+      "value": true,
+      "blocking": true,
+      "requirement": "Must be a raiSE member — only raiSE members proceed past shortlisting",
+      "remedy": "Apply for raiSE membership. $100 processing fee for Emerging and Leading tiers; raiSE states processing takes 4 to 8 weeks.",
+      "remedy_order": 2,
+      "remedy_est_weeks": 8,
+      "depends_on": ["is_incorporated"],
+      "applies_at_stage": 3
+    },
+    {
+      "field": "has_vwo_partnership",
+      "op": "eq",
+      "value": true,
+      "blocking": false,
+      "group": "vfg-unincorporated-evidence",
+      "group_mode": "any_of",
+      "when": { "field": "is_incorporated", "op": "eq", "value": false },
+      "requirement": "Unincorporated applicants should illustrate a partnership with a relevant Voluntary Welfare Organisation (VWO)",
+      "remedy": "Approach a VWO working with your beneficiary group and document the partnership.",
+      "remedy_order": 3,
+      "remedy_est_weeks": 4,
+      "applies_at_stage": 1
+    },
+    {
+      "field": "has_beneficiary_validation",
+      "op": "eq",
+      "value": true,
+      "blocking": false,
+      "group": "vfg-unincorporated-evidence",
+      "group_mode": "any_of",
+      "when": { "field": "is_incorporated", "op": "eq", "value": false },
+      "requirement": "…and/or validation with the intended beneficiary group",
+      "remedy": "Document engagements with your intended beneficiaries, or with an SSA or sector expert who can vouch for the need.",
+      "remedy_order": 3,
+      "remedy_est_weeks": 4,
+      "applies_at_stage": 1,
+      "_rationale": "blocking is FALSE for this group on purpose. raiSE's published wording is 'should illustrate' and 'encouraged', not 'must'. Encoding a soft expectation as a hard gate would tell a founder they are blocked when they are not — and we would deserve to be caught on it. It surfaces as strong advice, not a wall."
+    }
+  ],
+
+  "warnings": [
+    {
+      "id": "vfg-timeline-expectation",
+      "message": "raiSE's own published timeline for the five VentureForGood stages runs roughly 4 to 6 months before any funds are disbursed, and raiSE membership must be in place before shortlisting. Plan cash needs accordingly.",
+      "confirm_with_funder": false
+    }
+  ]
+}
