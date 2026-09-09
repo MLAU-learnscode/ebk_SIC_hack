@@ -1,0 +1,30 @@
+{
+  "grant_id": "raise-vfg-youth",
+  "stage_id": "stage_1_submit",
+  "sections": [
+    {
+      "funder_question": "Describe the social impact your venture intends to create.",
+      "plain_question": "Who does your idea help, and what changes for them?",
+      "text": "Quiet Hours will train and employ deaf and hard-of-hearing Singaporeans aged 18 to 30 as baristas. Over our first three years we expect to reach approximately 40 trainees, each receiving paid training followed by guaranteed shifts. Our aim is that trainees move into permanent hospitality roles within twelve months of joining.",
+      "word_limit": 300,
+      "gaps": [
+        {
+          "field": "impact.beneficiary_count_est",
+          "start": 145,
+          "end": 170,
+          "source": "AI_ESTIMATED",
+          "note": "We estimated this. Confirm before you submit."
+        }
+      ]
+    },
+    {
+      "funder_question": "What is the problem your venture addresses?",
+      "plain_question": "What is going wrong today that you want to fix?",
+      "text": "Deaf and hard-of-hearing young people in Singapore are effectively shut out of entry-level hospitality work, because hiring practices assume spoken order-taking. The barrier sits in how the job is designed, not in the worker. Quiet Hours removes that assumption from the role itself.",
+      "word_limit": 300,
+      "gaps": []
+    }
+  ],
+  "generated_at": "2026-09-09T10:00:00+08:00",
+  "from_live_model": false
+}

@@ -1,0 +1,472 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://vibeforgood2026/schemas/profile.schema.json",
+  "title": "FounderProfile",
+  "description": "FROZEN CONTRACT. Owner: B (Intelligence Lead). Changing any field name or type requires all three leads to agree in writing (see CONTRACT.md \u00a78). Every field below traces to a documented grant requirement in CONTEXT.md \u00a75 \u2014 if a field has no grant that needs it, it does not belong here. v1.0.1 (9 Sep): additive only \u2014 three nullable fields added at C's request, no renames, no type changes, profile_version deliberately NOT bumped so existing fixtures and saved profiles stay valid.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "profile_id",
+    "created_at",
+    "updated_at",
+    "answers",
+    "field_meta"
+  ],
+  "properties": {
+    "profile_version": {
+      "const": "1.0.0",
+      "description": "Bump ONLY by written agreement of all three leads. A(UI) may assert on this."
+    },
+    "profile_id": {
+      "type": "string",
+      "description": "uuid v4, generated once on first intake screen by A."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "answers": {
+      "type": "object",
+      "description": "Founder-facing data. UNANSWERED = key absent or null. NEVER \"\" or 0 or false. A false boolean means the founder said no; null means we have not asked yet. The eligibility engine treats these differently.",
+      "additionalProperties": false,
+      "required": [
+        "founder",
+        "venture",
+        "impact",
+        "memberships",
+        "funding",
+        "readiness"
+      ],
+      "properties": {
+        "founder": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "full_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "age": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 120,
+              "description": "VFG Youth: 18-35 blocking."
+            },
+            "citizenship": {
+              "enum": [
+                "SG",
+                "PR",
+                "OTHER",
+                null
+              ],
+              "description": "VFG + Startup SG Founder: SG|PR blocking. Uppercase, matches CONTEXT.md rules example."
+            },
+            "is_key_applicant": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "VFG requires the KEY applicant be SG/PR, not merely a team member."
+            },
+            "first_time_founder": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Startup SG Founder: must be true, blocking."
+            },
+            "previously_incorporated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Startup SG Founder: must be false, blocking."
+            },
+            "equity_pct": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Startup SG Founder: >=30 (held or proposed), blocking."
+            },
+            "access_needs": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "SCREEN_READER",
+                  "PLAIN_LANGUAGE",
+                  "EXTRA_TIME",
+                  "LARGE_TEXT",
+                  "VOICE_INPUT",
+                  "REDUCED_MOTION"
+                ]
+              },
+              "description": "Self-declared, optional, NEVER an eligibility input. Drives UI affordances only. No rule file may reference this field."
+            },
+            "residing_in_sg": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Young ChangeMakers: applicant must be residing in Singapore. BLOCKING. Added v1.0.1 at C's request (YCM is not in CONTEXT.md \u00a75; it came from C's source-checking on 8 Sep)."
+            }
+          }
+        },
+        "venture": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "one_liner": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "AI-extracted from free text at step venture_idea."
+            },
+            "problem_statement": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "stage": {
+              "enum": [
+                "IDEA",
+                "PROTOTYPE",
+                "OPERATING",
+                null
+              ]
+            },
+            "incorporated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "VFG: if false, SSO partnership and/or beneficiary validation expected."
+            },
+            "uen": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Populated by ACRA lookup, or founder-entered then ACRA-confirmed."
+            },
+            "incorporation_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "entity_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ACRA-sourced. Read-only for the founder."
+            },
+            "entity_status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ACRA-sourced, e.g. 'Live Company'. Read-only for the founder."
+            },
+            "ssic_code": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ACRA-sourced primary SSIC."
+            },
+            "project_duration_months": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Young ChangeMakers: project must run <= 6 months. BLOCKING, remediable (rescope). Added v1.0.1."
+            }
+          }
+        },
+        "impact": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "beneficiary_group": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "beneficiary_count_est": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Commonly AI_ESTIMATED. Expect a gap flag on this field."
+            },
+            "impact_description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "beneficiary_validation": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "VFG: expected for unincorporated applicants."
+            },
+            "sso_partnership": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "VFG: expected for unincorporated applicants. MISNAMED \u2014 raiSE's term is VWO (Voluntary Welfare Organisation), not SSO (Social Service Office); CONTEXT.md \u00a75 carries the same error. Key is FROZEN because A is building on it. Every founder-facing label for this field must say VWO."
+            },
+            "sso_partner_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "memberships": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "raise_member": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "VFG: must be true, blocking, REMEDIABLE (apply for membership)."
+            },
+            "raise_member_since": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "amp_relationship": {
+              "enum": [
+                "NONE",
+                "IN_DISCUSSION",
+                "LOR_ISSUED",
+                null
+              ],
+              "description": "Startup SG Founder: LOR_ISSUED required, blocking, REMEDIABLE."
+            },
+            "amp_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "e.g. 'SMU IIE', 'NUS Enterprise'."
+            }
+          }
+        },
+        "funding": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "amount_sought_sgd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "other_govt_funding": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Startup SG Founder: must be false for this business concept, blocking, NOT remediable."
+            },
+            "other_govt_funding_detail": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "can_match_capital_sgd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Startup SG Founder matching capital. NON-BLOCKING by design: the 1:1 ratio comes only from vendor blogs and ESG's own page 404'd. Blocking on an unverified figure is the exact failure this product exists to prevent. Added v1.0.1."
+            }
+          }
+        },
+        "readiness": {
+          "type": "object",
+          "description": "Documents VFG requires to START an application (CONTEXT.md \u00a75). Drives the 'what you still need' panel, not eligibility status.",
+          "additionalProperties": false,
+          "properties": {
+            "has_pitch_deck": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "has_acra_profile": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "has_management_accounts": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "has_financial_projections": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "has_team_resumes": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "team_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "field_meta": {
+      "type": "object",
+      "description": "THE SEAM. Keyed by dot-path into answers, e.g. 'founder.age', 'impact.beneficiary_count_est'. A renders a gap flag wherever source is AI_ESTIMATED or confirmed_by_founder is false. A field absent from this map is treated as UNKNOWN provenance and MUST be flagged.",
+      "propertyNames": {
+        "pattern": "^[a-z_]+\\.[a-z_]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source",
+          "confirmed_by_founder",
+          "updated_at"
+        ],
+        "properties": {
+          "source": {
+            "enum": [
+              "FOUNDER",
+              "AI_EXTRACTED",
+              "AI_ESTIMATED",
+              "ACRA",
+              "DEFAULT"
+            ],
+            "description": "FOUNDER = typed or spoke it. AI_EXTRACTED = pulled from their own words, needs confirm-back. AI_ESTIMATED = we guessed, ALWAYS gap-flagged. ACRA = official registry. DEFAULT = schema default, never shown as fact."
+          },
+          "confirmed_by_founder": {
+            "type": "boolean",
+            "description": "Set true only after the confirm-back loop (CONTEXT.md \u00a74)."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Shown verbatim in the gap-flag tooltip. Keep under 120 chars."
+          }
+        }
+      }
+    },
+    "stage_progress": {
+      "type": "array",
+      "description": "P2-vertical. One row per (grant, stage). C owns stages.json which defines the stage ids.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "grant_id",
+          "stage_id",
+          "status",
+          "updated_at"
+        ],
+        "properties": {
+          "grant_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "stage_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "status": {
+            "enum": [
+              "NOT_STARTED",
+              "IN_PROGRESS",
+              "SUBMITTED",
+              "PASSED",
+              "BLOCKED"
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "elicit_progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Where the founder is in intake. A owns writing this; B reads it to pick the next fixture.",
+      "properties": {
+        "completed_step_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "current_step_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

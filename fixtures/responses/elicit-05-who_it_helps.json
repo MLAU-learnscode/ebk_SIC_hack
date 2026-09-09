@@ -1,0 +1,32 @@
+{
+  "step_id": "who_it_helps",
+  "patch": {
+    "impact": {
+      "beneficiary_group": "Deaf and hard-of-hearing youth in Singapore, aged 18 to 30",
+      "beneficiary_count_est": 40,
+      "impact_description": "Paid barista training followed by guaranteed shifts, with the aim of moving trainees into permanent hospitality roles within twelve months."
+    }
+  },
+  "field_meta_patch": {
+    "impact.beneficiary_group": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "impact.beneficiary_count_est": {
+      "source": "AI_ESTIMATED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We estimated this from your first three years. Confirm before you submit."
+    },
+    "impact.impact_description": {
+      "source": "AI_EXTRACTED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We wrote this from what you told us."
+    }
+  },
+  "confirm_back": "So: deaf and hard-of-hearing youth, 18 to 30, and we've put roughly 40 people over three years. That number is our estimate, not yours — we've flagged it so you can correct it later.",
+  "next_step_id": "venture_stage"
+}

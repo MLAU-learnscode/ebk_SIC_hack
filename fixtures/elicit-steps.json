@@ -1,0 +1,238 @@
+[
+  {
+    "step_id": "who_you_are",
+    "question": "First up — what should we call you, and how old are you?",
+    "why": "Some funding is only open to founders aged 18 to 35, so this tells us early what you can go for.",
+    "input_kind": "SHORT_TEXT",
+    "writes_fields": [
+      "founder.full_name",
+      "founder.age"
+    ],
+    "optional": false,
+    "fixture": "elicit-01-who_you_are.json"
+  },
+  {
+    "step_id": "citizenship",
+    "question": "Are you a Singapore citizen or PR?",
+    "why": "Both raiSE and Startup SG Founder need the main applicant to be a citizen or PR.",
+    "input_kind": "SINGLE_CHOICE",
+    "choices": [
+      {
+        "value": "SG",
+        "label": "Singapore citizen"
+      },
+      {
+        "value": "PR",
+        "label": "Permanent resident",
+        "funder_term": "PR"
+      },
+      {
+        "value": "OTHER",
+        "label": "Neither"
+      }
+    ],
+    "writes_fields": [
+      "founder.citizenship",
+      "founder.is_key_applicant",
+      "founder.residing_in_sg"
+    ],
+    "optional": false,
+    "fixture": "elicit-02-citizenship.json"
+  },
+  {
+    "step_id": "access_needs",
+    "question": "Anything we should change about how this page works for you?",
+    "why": "This only changes how we show things to you. It never affects what you qualify for.",
+    "input_kind": "MULTI_CHOICE",
+    "choices": [
+      {
+        "value": "PLAIN_LANGUAGE",
+        "label": "Keep the language simple"
+      },
+      {
+        "value": "LARGE_TEXT",
+        "label": "Bigger text"
+      },
+      {
+        "value": "VOICE_INPUT",
+        "label": "Let me speak instead of type"
+      },
+      {
+        "value": "EXTRA_TIME",
+        "label": "No time limits"
+      },
+      {
+        "value": "SCREEN_READER",
+        "label": "I use a screen reader"
+      },
+      {
+        "value": "REDUCED_MOTION",
+        "label": "Less movement on screen"
+      }
+    ],
+    "writes_fields": [
+      "founder.access_needs"
+    ],
+    "optional": true,
+    "fixture": "elicit-03-access_needs.json"
+  },
+  {
+    "step_id": "venture_idea",
+    "question": "Tell us about your idea, in your own words.",
+    "why": "However it comes out is fine. We'll tidy it up and show you what we wrote.",
+    "input_kind": "FREE_TEXT",
+    "writes_fields": [
+      "venture.name",
+      "venture.one_liner",
+      "venture.problem_statement"
+    ],
+    "optional": false,
+    "fixture": "elicit-04-venture_idea.json"
+  },
+  {
+    "step_id": "who_it_helps",
+    "question": "Who does this help, and roughly how many people?",
+    "why": "Social enterprise funders ask for this in almost every form. A rough number is fine for now.",
+    "input_kind": "FREE_TEXT",
+    "writes_fields": [
+      "impact.beneficiary_group",
+      "impact.beneficiary_count_est",
+      "impact.impact_description"
+    ],
+    "optional": false,
+    "fixture": "elicit-05-who_it_helps.json"
+  },
+  {
+    "step_id": "venture_stage",
+    "question": "Where are you up to?",
+    "why": "Some grants are only for businesses that have already registered. Most are not — being early is fine.",
+    "input_kind": "SINGLE_CHOICE",
+    "choices": [
+      {
+        "value": "IDEA",
+        "label": "It's still an idea"
+      },
+      {
+        "value": "PROTOTYPE",
+        "label": "I've tried it out in a small way"
+      },
+      {
+        "value": "OPERATING",
+        "label": "It's running and registered",
+        "funder_term": "incorporated"
+      }
+    ],
+    "writes_fields": [
+      "venture.stage",
+      "venture.incorporated",
+      "venture.project_duration_months"
+    ],
+    "optional": false,
+    "fixture": "elicit-06-venture_stage.json"
+  },
+  {
+    "step_id": "founding_history",
+    "question": "Have you started and registered a business before?",
+    "why": "Startup SG Founder is only for first-time founders, so a yes here changes what we show you.",
+    "input_kind": "YES_NO",
+    "writes_fields": [
+      "founder.first_time_founder",
+      "founder.previously_incorporated",
+      "founder.equity_pct"
+    ],
+    "optional": false,
+    "fixture": "elicit-07-founding_history.json"
+  },
+  {
+    "step_id": "support_network",
+    "question": "Are you working with any organisation on this yet?",
+    "why": "Membership and partnerships are the most common thing standing between founders and a grant — and the easiest to fix.",
+    "input_kind": "MULTI_CHOICE",
+    "choices": [
+      {
+        "value": "RAISE_MEMBER",
+        "label": "I'm a raiSE member",
+        "funder_term": "raiSE membership"
+      },
+      {
+        "value": "AMP_TALKING",
+        "label": "I've spoken to a university or accelerator",
+        "funder_term": "Accredited Mentor Partner"
+      },
+      {
+        "value": "VWO_PARTNER",
+        "label": "A registered charity or non-profit backs us",
+        "funder_term": "VWO partnership"
+      },
+      {
+        "value": "NONE",
+        "label": "Not yet"
+      }
+    ],
+    "writes_fields": [
+      "memberships.raise_member",
+      "memberships.amp_relationship",
+      "memberships.amp_name",
+      "impact.sso_partnership",
+      "impact.beneficiary_validation"
+    ],
+    "optional": false,
+    "fixture": "elicit-08-support_network.json"
+  },
+  {
+    "step_id": "money",
+    "question": "Roughly how much would you need to get going?",
+    "why": "A rough figure is fine. We'll help you break it down properly later.",
+    "input_kind": "NUMBER",
+    "writes_fields": [
+      "funding.amount_sought_sgd",
+      "funding.other_govt_funding",
+      "funding.can_match_capital_sgd"
+    ],
+    "optional": false,
+    "fixture": "elicit-09-money.json"
+  },
+  {
+    "step_id": "what_you_have",
+    "question": "Which of these do you already have?",
+    "why": "This is the paperwork funders ask for. Most founders have none of it at this stage — that's normal, and we'll show you what to do about each one.",
+    "input_kind": "MULTI_CHOICE",
+    "choices": [
+      {
+        "value": "PITCH_DECK",
+        "label": "Slides about your idea",
+        "funder_term": "pitch deck"
+      },
+      {
+        "value": "ACRA",
+        "label": "A business registration document",
+        "funder_term": "ACRA profile"
+      },
+      {
+        "value": "ACCOUNTS",
+        "label": "Records of money in and out",
+        "funder_term": "management accounts"
+      },
+      {
+        "value": "PROJECTIONS",
+        "label": "A guess at the next 2 years of money",
+        "funder_term": "financial projections"
+      },
+      {
+        "value": "RESUMES",
+        "label": "CVs for you and your team",
+        "funder_term": "founding team resumes"
+      }
+    ],
+    "writes_fields": [
+      "readiness.has_pitch_deck",
+      "readiness.has_acra_profile",
+      "readiness.has_management_accounts",
+      "readiness.has_financial_projections",
+      "readiness.has_team_resumes",
+      "readiness.team_size"
+    ],
+    "optional": false,
+    "fixture": "elicit-10-what_you_have.json"
+  }
+]
