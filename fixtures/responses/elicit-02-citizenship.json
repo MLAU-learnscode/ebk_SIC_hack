@@ -1,0 +1,32 @@
+{
+  "step_id": "citizenship",
+  "patch": {
+    "founder": {
+      "citizenship": "SG",
+      "is_key_applicant": true,
+      "residing_in_sg": true
+    }
+  },
+  "field_meta_patch": {
+    "founder.citizenship": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "founder.is_key_applicant": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "founder.residing_in_sg": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    }
+  },
+  "confirm_back": "Singapore citizen, living here, and you're the main applicant. That clears the citizenship rule on all three.",
+  "next_step_id": "access_needs"
+}

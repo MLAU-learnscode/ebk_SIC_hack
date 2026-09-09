@@ -1,0 +1,32 @@
+{
+  "step_id": "venture_idea",
+  "patch": {
+    "venture": {
+      "name": "Sightlines",
+      "one_liner": "Disability-awareness training for employers, designed and delivered by people who are losing their sight.",
+      "problem_statement": "Young adults newly diagnosed with sight loss in Singapore lose their footing at work at exactly the moment employers are least equipped to keep them. Sightlines turns that lived experience into training the employer pays for, delivered by the people it is about."
+    }
+  },
+  "field_meta_patch": {
+    "venture.name": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "venture.one_liner": {
+      "source": "AI_EXTRACTED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We wrote this from what you told us. Change anything that sounds off."
+    },
+    "venture.problem_statement": {
+      "source": "AI_EXTRACTED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We wrote this from what you told us. Change anything that sounds off."
+    }
+  },
+  "confirm_back": "Here is how we would say it: \"Sightlines is disability-awareness training for employers, designed and delivered by people who are losing their sight.\" Does that sound like your idea?",
+  "next_step_id": "who_it_helps"
+}

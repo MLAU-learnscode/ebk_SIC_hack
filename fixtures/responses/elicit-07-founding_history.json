@@ -1,0 +1,32 @@
+{
+  "step_id": "founding_history",
+  "patch": {
+    "founder": {
+      "first_time_founder": false,
+      "previously_incorporated": true,
+      "equity_pct": 100
+    }
+  },
+  "field_meta_patch": {
+    "founder.first_time_founder": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "founder.previously_incorporated": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "founder.equity_pct": {
+      "source": "AI_ESTIMATED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We assumed you would hold all of it to start. Correct this if you have co-founders."
+    }
+  },
+  "confirm_back": "You registered a tutoring company at 19 that never traded and was struck off. That still counts as having incorporated before — and it matters more than you would expect. We will show you exactly where.",
+  "next_step_id": "support_network"
+}

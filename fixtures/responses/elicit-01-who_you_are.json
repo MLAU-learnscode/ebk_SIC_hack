@@ -1,0 +1,25 @@
+{
+  "step_id": "who_you_are",
+  "patch": {
+    "founder": {
+      "full_name": "Ren",
+      "age": 24
+    }
+  },
+  "field_meta_patch": {
+    "founder.full_name": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "founder.age": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    }
+  },
+  "confirm_back": "Got it — Ren, 24. That puts you inside the age range every scheme we track uses.",
+  "next_step_id": "citizenship"
+}

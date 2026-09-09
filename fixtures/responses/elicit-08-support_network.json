@@ -1,0 +1,48 @@
+{
+  "step_id": "support_network",
+  "patch": {
+    "memberships": {
+      "raise_member": false,
+      "amp_relationship": "IN_DISCUSSION",
+      "amp_name": "SMU IIE"
+    },
+    "impact": {
+      "sso_partnership": false,
+      "beneficiary_validation": true
+    }
+  },
+  "field_meta_patch": {
+    "memberships.raise_member": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "memberships.amp_relationship": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "memberships.amp_name": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "impact.sso_partnership": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "impact.beneficiary_validation": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    }
+  },
+  "confirm_back": "Talking to SMU IIE, not a raiSE member yet, no VWO partner — but you can show who you help and why. Two of those are steps we can put in order for you.",
+  "next_step_id": "money"
+}

@@ -1,0 +1,32 @@
+{
+  "step_id": "money",
+  "patch": {
+    "funding": {
+      "amount_sought_sgd": 25000,
+      "other_govt_funding": false,
+      "can_match_capital_sgd": 0
+    }
+  },
+  "field_meta_patch": {
+    "funding.amount_sought_sgd": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "funding.other_govt_funding": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "funding.can_match_capital_sgd": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    }
+  },
+  "confirm_back": "Around $25,000, no government funding for this idea before, and no money of your own to put in yet. All three noted.",
+  "next_step_id": "what_you_have"
+}

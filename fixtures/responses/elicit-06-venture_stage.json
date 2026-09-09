@@ -1,0 +1,32 @@
+{
+  "step_id": "venture_stage",
+  "patch": {
+    "venture": {
+      "stage": "PROTOTYPE",
+      "incorporated": false,
+      "project_duration_months": 6
+    }
+  },
+  "field_meta_patch": {
+    "venture.stage": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "venture.incorporated": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "venture.project_duration_months": {
+      "source": "AI_ESTIMATED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We assumed a six-month first phase. Change it if yours is longer."
+    }
+  },
+  "confirm_back": "You have run it in a small way but the business is not registered. That is fine — none of these need you registered to apply.",
+  "next_step_id": "founding_history"
+}

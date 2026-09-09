@@ -1,0 +1,32 @@
+{
+  "step_id": "who_it_helps",
+  "patch": {
+    "impact": {
+      "beneficiary_group": "Young adults in Singapore newly diagnosed with sight loss, aged 18 to 35",
+      "beneficiary_count_est": 40,
+      "impact_description": "Peer support at the point of diagnosis, then paid work delivering training to the employers most likely to hire people like them."
+    }
+  },
+  "field_meta_patch": {
+    "impact.beneficiary_group": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "impact.beneficiary_count_est": {
+      "source": "AI_ESTIMATED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We estimated this from your first three years. Confirm before you submit."
+    },
+    "impact.impact_description": {
+      "source": "AI_EXTRACTED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We wrote this from what you told us."
+    }
+  },
+  "confirm_back": "So: young adults newly diagnosed with sight loss, and we have put roughly 40 people over three years. That number is our estimate, not yours — we have flagged it so you can correct it.",
+  "next_step_id": "venture_stage"
+}

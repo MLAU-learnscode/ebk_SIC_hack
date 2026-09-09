@@ -1,0 +1,22 @@
+{
+  "step_id": "access_needs",
+  "patch": {
+    "founder": {
+      "access_needs": [
+        "PLAIN_LANGUAGE",
+        "VOICE_INPUT",
+        "LARGE_TEXT"
+      ]
+    }
+  },
+  "field_meta_patch": {
+    "founder.access_needs": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    }
+  },
+  "confirm_back": "Plain language, voice input and larger text are on. You can change these any time from the top of the page.",
+  "next_step_id": "venture_idea"
+}
