@@ -2,9 +2,9 @@
   "step_id": "who_it_helps",
   "patch": {
     "impact": {
-      "beneficiary_group": "Deaf and hard-of-hearing youth in Singapore, aged 18 to 30",
+      "beneficiary_group": "Young adults in Singapore newly diagnosed with sight loss, aged 18 to 35",
       "beneficiary_count_est": 40,
-      "impact_description": "Paid barista training followed by guaranteed shifts, with the aim of moving trainees into permanent hospitality roles within twelve months."
+      "impact_description": "Peer support at the point of diagnosis, then paid work delivering training to the employers most likely to hire people like them."
     }
   },
   "field_meta_patch": {
@@ -27,6 +27,6 @@
       "note": "We wrote this from what you told us."
     }
   },
-  "confirm_back": "So: deaf and hard-of-hearing youth, 18 to 30, and we've put roughly 40 people over three years. That number is our estimate, not yours — we've flagged it so you can correct it later.",
+  "confirm_back": "So: young adults newly diagnosed with sight loss, and we have put roughly 40 people over three years. That number is our estimate, not yours — we have flagged it so you can correct it.",
   "next_step_id": "venture_stage"
 }

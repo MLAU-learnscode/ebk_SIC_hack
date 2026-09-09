@@ -24,9 +24,9 @@
       "source": "AI_ESTIMATED",
       "confirmed_by_founder": false,
       "updated_at": "2026-09-09T10:00:00+08:00",
-      "note": "We assumed a 6-month first phase. Change it if yours is longer."
+      "note": "We assumed a six-month first phase. Change it if yours is longer."
     }
   },
-  "confirm_back": "You've run it in a small way but haven't registered a company. That's fine — neither scheme here needs you registered to apply.",
+  "confirm_back": "You have run it in a small way but the business is not registered. That is fine — none of these need you registered to apply.",
   "next_step_id": "founding_history"
 }

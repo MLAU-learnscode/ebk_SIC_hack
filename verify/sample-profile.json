@@ -5,23 +5,24 @@
   "updated_at": "2026-09-08T09:22:00+08:00",
   "answers": {
     "founder": {
-      "full_name": "Amirah B.",
+      "full_name": "Ren",
       "age": 24,
       "citizenship": "SG",
       "is_key_applicant": true,
-      "first_time_founder": true,
-      "previously_incorporated": false,
+      "first_time_founder": false,
+      "previously_incorporated": true,
       "equity_pct": 100,
       "access_needs": [
-        "SCREEN_READER",
-        "PLAIN_LANGUAGE"
+        "PLAIN_LANGUAGE",
+        "VOICE_INPUT",
+        "LARGE_TEXT"
       ],
       "residing_in_sg": true
     },
     "venture": {
-      "name": "Quiet Hours",
-      "one_liner": "A cafe staffed and run by deaf and hard-of-hearing baristas.",
-      "problem_statement": "Deaf youth in Singapore face limited entry-level hospitality roles.",
+      "name": "Sightlines",
+      "one_liner": "Disability-awareness training for employers, designed and delivered by people who are losing their sight.",
+      "problem_statement": "Young adults newly diagnosed with sight loss lose their footing at work at exactly the moment employers are least equipped to keep them.",
       "stage": "PROTOTYPE",
       "incorporated": false,
       "uen": null,
@@ -32,9 +33,9 @@
       "project_duration_months": 6
     },
     "impact": {
-      "beneficiary_group": "Deaf and hard-of-hearing youth aged 18-30",
+      "beneficiary_group": "Young adults in Singapore newly diagnosed with sight loss, aged 18 to 35",
       "beneficiary_count_est": 40,
-      "impact_description": "Paid training and employment pathway into hospitality.",
+      "impact_description": "Peer support at diagnosis, then paid work delivering training to employers.",
       "beneficiary_validation": true,
       "sso_partnership": false,
       "sso_partner_name": null
@@ -46,7 +47,7 @@
       "amp_name": "SMU IIE"
     },
     "funding": {
-      "amount_sought_sgd": 50000,
+      "amount_sought_sgd": 25000,
       "other_govt_funding": false,
       "other_govt_funding_detail": null,
       "can_match_capital_sgd": 0
@@ -93,8 +94,13 @@
       "citizenship",
       "access_needs",
       "venture_idea",
-      "who_it_helps"
+      "who_it_helps",
+      "venture_stage",
+      "founding_history",
+      "support_network",
+      "money",
+      "what_you_have"
     ],
-    "current_step_id": "venture_stage"
+    "current_step_id": null
   }
 }

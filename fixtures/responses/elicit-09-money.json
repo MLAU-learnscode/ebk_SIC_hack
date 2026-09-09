@@ -2,7 +2,7 @@
   "step_id": "money",
   "patch": {
     "funding": {
-      "amount_sought_sgd": 50000,
+      "amount_sought_sgd": 25000,
       "other_govt_funding": false,
       "can_match_capital_sgd": 0
     }
@@ -27,6 +27,6 @@
       "note": null
     }
   },
-  "confirm_back": "Around $50,000, and this idea hasn't taken government funding before. That second one matters — Startup SG Founder closes if it has.",
+  "confirm_back": "Around $25,000, no government funding for this idea before, and no money of your own to put in yet. All three noted.",
   "next_step_id": "what_you_have"
 }
