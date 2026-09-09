@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test:rules": "tsx verify/eligibility.test.ts",
+    "test:elicit": "tsx verify/smoke-dynamic.ts",
     "test:schema": "node verify/validate.mjs",
     "test:crosscheck": "tsx verify/cross-check.ts",
     "fixtures": "node verify/gen-fixtures.mjs"

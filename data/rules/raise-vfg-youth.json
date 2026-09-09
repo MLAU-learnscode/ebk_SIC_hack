@@ -49,6 +49,7 @@
       "blocking": true,
       "requirement": "Business registered with ACRA (required in order to hold raiSE membership, not required to submit the initial application)",
       "remedy": "Register the business with ACRA via BizFile.",
+      "remedy_url": "https://www.bizfile.gov.sg/",
       "remedy_order": 1,
       "remedy_est_weeks": 1,
       "applies_at_stage": 3,
@@ -61,6 +62,7 @@
       "blocking": true,
       "requirement": "Must be a raiSE member — only raiSE members proceed past shortlisting",
       "remedy": "Apply for raiSE membership. $100 processing fee for Emerging and Leading tiers; raiSE states processing takes 4 to 8 weeks.",
+      "remedy_url": "https://www.raise.sg/become-a-member/",
       "remedy_order": 2,
       "remedy_est_weeks": 8,
       "depends_on": [
