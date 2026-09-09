@@ -1,0 +1,32 @@
+{
+  "step_id": "money",
+  "patch": {
+    "funding": {
+      "amount_sought_sgd": 50000,
+      "other_govt_funding": false,
+      "can_match_capital_sgd": 0
+    }
+  },
+  "field_meta_patch": {
+    "funding.amount_sought_sgd": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "funding.other_govt_funding": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "funding.can_match_capital_sgd": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    }
+  },
+  "confirm_back": "Around $50,000, and this idea hasn't taken government funding before. That second one matters — Startup SG Founder closes if it has.",
+  "next_step_id": "what_you_have"
+}

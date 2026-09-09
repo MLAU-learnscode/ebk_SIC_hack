@@ -1,0 +1,53 @@
+{
+  "step_id": "what_you_have",
+  "patch": {
+    "readiness": {
+      "has_pitch_deck": false,
+      "has_acra_profile": false,
+      "has_management_accounts": false,
+      "has_financial_projections": false,
+      "has_team_resumes": true,
+      "team_size": 2
+    }
+  },
+  "field_meta_patch": {
+    "readiness.has_pitch_deck": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "readiness.has_acra_profile": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "readiness.has_management_accounts": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "readiness.has_financial_projections": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "readiness.has_team_resumes": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "readiness.team_size": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    }
+  },
+  "confirm_back": "CVs yes, everything else not yet. That's the normal starting point — we'll show you which ones actually block an application and which can wait.",
+  "next_step_id": null
+}

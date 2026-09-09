@@ -1,0 +1,32 @@
+{
+  "step_id": "founding_history",
+  "patch": {
+    "founder": {
+      "first_time_founder": true,
+      "previously_incorporated": false,
+      "equity_pct": 100
+    }
+  },
+  "field_meta_patch": {
+    "founder.first_time_founder": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "founder.previously_incorporated": {
+      "source": "FOUNDER",
+      "confirmed_by_founder": true,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": null
+    },
+    "founder.equity_pct": {
+      "source": "AI_ESTIMATED",
+      "confirmed_by_founder": false,
+      "updated_at": "2026-09-09T10:00:00+08:00",
+      "note": "We assumed you'd hold all of it to start. Correct this if you have co-founders."
+    }
+  },
+  "confirm_back": "First business, never registered one before, and you'd hold all of it to start. That keeps Startup SG Founder open to you — it's first-timers only.",
+  "next_step_id": "support_network"
+}
