@@ -17,16 +17,24 @@ export default function App() {
   const [profile, setProfile] = useState<FounderProfile>(() => loadProfile() ?? createEmptyProfile());
   const [screen, setScreen] = useState<ScreenId>(SCREEN.WELCOME);
   const [grantId, setGrantId] = useState<GrantId | null>(null);
-  const [textSize, setTextSize] = useState<TextSize>('normal');
+  const [textSize, setTextSizeRaw] = useState<TextSize>('normal');
+  // Once the founder has touched the control directly, the access-needs answer
+  // must stop overriding it — otherwise "Normal" silently snaps back to "Large".
+  const [textSizeAuto, setTextSizeAuto] = useState(true);
 
   const needs = profile.answers.founder.access_needs;
+
+  function setTextSize(s: TextSize) {
+    setTextSizeAuto(false);
+    setTextSizeRaw(s);
+  }
 
   /* Access needs picked during intake drive the interface immediately.
      They never touch eligibility — see the walled-off field in the schema. */
   useEffect(() => {
-    if (needs.includes('LARGE_TEXT') && textSize === 'normal') setTextSize('large');
+    if (textSizeAuto && needs.includes('LARGE_TEXT')) setTextSizeRaw('large');
     if (needs.includes('REDUCED_MOTION')) document.documentElement.dataset.motion = 'reduced';
-  }, [needs, textSize]);
+  }, [needs, textSizeAuto]);
 
   useEffect(() => {
     document.documentElement.dataset.textSize = textSize;
@@ -48,6 +56,15 @@ export default function App() {
     () => (profile.elicit_progress?.completed_step_ids.length ?? 0) > 0,
     [profile],
   );
+
+  /* "Pick up where I left off" must land on wherever that actually is: mid-intake
+     if a question is still open, or the readiness map if intake is already done —
+     never back at question one with a fully-answered profile behind it. */
+  function resumeScreen(): ScreenId {
+    if (profile.elicit_progress?.current_step_id) return SCREEN.INTAKE;
+    if (started) return SCREEN.READINESS_MAP;
+    return SCREEN.WELCOME;
+  }
 
   return (
     <div className="app">
@@ -98,7 +115,7 @@ export default function App() {
             <Welcome
               hasSaved={started}
               onStart={() => { update(createEmptyProfile()); setScreen(SCREEN.INTAKE); }}
-              onResume={() => setScreen(SCREEN.INTAKE)}
+              onResume={() => setScreen(resumeScreen())}
               onSeed={(seeded) => { update(seeded); setScreen(SCREEN.INTAKE); }}
             />
           )}

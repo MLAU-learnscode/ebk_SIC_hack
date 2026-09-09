@@ -1,0 +1,144 @@
+{
+  "_comment": "The demo persona, shaped as a VALID FounderProfile per data/profile.schema.json (B's frozen contract) so A can load it directly with no adapter. CONTEXT §9 requires three grants in three different states; this profile is tuned to produce exactly that. Owned by C.",
+
+  "_persona": {
+    "name": "Ren",
+    "one_line": "24, visually impaired, wants to turn a peer-support group for newly-diagnosed young adults into a paid training service for employers.",
+    "narrative": "Ren has run the peer-support group informally for two years and has real beneficiary relationships. They incorporated a small tutoring business at 19 that never traded and was struck off. They have never applied for funding, have no pitch deck, no ACRA profile, and no financial projections. They do not know that the tutoring company still counts against them.",
+    "why_this_persona": "They sit exactly on the wedge in CONTEXT §2 — 18-35, disabled, pre-incorporation, never applied. And they carry one piece of invisible history that silently closes a door, which is problem P1 in a single human detail."
+  },
+
+  "_expected_states": {
+    "_comment": "ASSERTED BY scripts/validate-rules.mjs. If a rules edit changes any of these, the build fails loudly instead of the demo quietly losing a state on stage. Do not update these to match a broken result — work out why the result changed.",
+    "nyc-ycm": "eligible_now",
+    "raise-vfg-youth": "eligible_after_steps",
+    "startup-sg-founder": "not_a_fit"
+  },
+
+  "_state_derivation": {
+    "nyc-ycm": "age 24 in [15,35] ✓ · citizenship SG ✓ · residing_in_sg true ✓ · project_duration_months 6 ≤ 6 ✓. No blockers, no unknowns → eligible_now. The forward-looking sequencing warning fires because funding.other_govt_funding is false.",
+    "raise-vfg-youth": "age ✓ · citizenship ✓ · venture.incorporated false ✗ (remedy 1, ACRA) · memberships.raise_member false ✗ (remedy 2, depends on remedy 1) → eligible_after_steps with an ordered two-step chain. The unincorporated-evidence group passes on impact.beneficiary_validation, so the founder sees credit for work already done rather than an undifferentiated wall.",
+    "startup-sg-founder": "founder.first_time_founder false and founder.previously_incorporated true — both terminal, no remedy exists → not_a_fit. equity_pct 100 ✓ and citizenship ✓ still render as satisfied, because showing what someone DOES have is the point of the map."
+  },
+
+  "_do_not": [
+    "Do not add a field absent from data/profile.schema.json — the validator rejects it, because a field that does not resolve reads as null and silently changes an eligibility answer.",
+    "Do not tune this profile to make a demo beat land better without updating _state_derivation. A fixture that no longer explains itself is how a wrong claim reaches a stage.",
+    "founder.access_needs is UI-only. No rules file may read it, and the validator enforces that."
+  ],
+
+  "profile_version": "1.0.0",
+  "profile_id": "3f8a1c92-7d4e-4b16-9a05-2e8c6b1f0d33",
+  "created_at": "2026-09-09T09:00:00Z",
+  "updated_at": "2026-09-09T09:42:00Z",
+
+  "answers": {
+    "founder": {
+      "full_name": "Ren Tan",
+      "age": 24,
+      "citizenship": "SG",
+      "residing_in_sg": true,
+      "is_key_applicant": true,
+      "first_time_founder": false,
+      "previously_incorporated": true,
+      "equity_pct": 100,
+      "access_needs": ["SCREEN_READER", "PLAIN_LANGUAGE"]
+    },
+
+    "venture": {
+      "name": "Second Sight",
+      "one_liner": "Employer training and peer support for young adults in the first year after a sight-loss diagnosis.",
+      "problem_statement": "Young adults newly diagnosed with degenerative sight loss drop out of work and study within the first year, before any support scheme reaches them.",
+      "stage": "PROTOTYPE",
+      "incorporated": false,
+      "uen": null,
+      "incorporation_date": null,
+      "entity_type": null,
+      "entity_status": null,
+      "ssic_code": null,
+      "project_duration_months": 6
+    },
+
+    "impact": {
+      "beneficiary_group": "Singaporeans aged 18 to 30 in the first year after a sight-loss diagnosis.",
+      "beneficiary_count_est": 120,
+      "impact_description": "Peer support in the first year, plus paid workshops that help employers retain staff who are losing their sight rather than exit them.",
+      "beneficiary_validation": true,
+      "sso_partnership": false,
+      "sso_partner_name": null
+    },
+
+    "memberships": {
+      "raise_member": false,
+      "raise_member_since": null,
+      "amp_relationship": "NONE",
+      "amp_name": null
+    },
+
+    "funding": {
+      "amount_sought_sgd": 20000,
+      "other_govt_funding": false,
+      "other_govt_funding_detail": null,
+      "can_match_capital_sgd": 0
+    },
+
+    "readiness": {
+      "has_pitch_deck": false,
+      "has_acra_profile": false,
+      "has_management_accounts": false,
+      "has_financial_projections": false,
+      "has_team_resumes": false,
+      "team_size": 2
+    }
+  },
+
+  "field_meta": {
+    "_comment_not_a_field": "THE SEAM (CONTEXT §4). beneficiary_count_est is the deliberate demo beat: it is AI_ESTIMATED and unconfirmed, so A must render a visible gap flag on it. Everything the founder actually said is FOUNDER and confirmed.",
+
+    "founder.age":                     { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:05:00Z" },
+    "founder.citizenship":             { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:05:00Z" },
+    "founder.residing_in_sg":          { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:05:00Z" },
+    "founder.full_name":               { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:02:00Z" },
+    "founder.is_key_applicant":        { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:06:00Z" },
+    "founder.first_time_founder":      { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:12:00Z", "note": "Founder recalled the 2021 tutoring company when asked directly." },
+    "founder.previously_incorporated": { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:12:00Z", "note": "Struck off 2022. Still counts for Startup SG Founder." },
+    "founder.equity_pct":              { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:14:00Z" },
+    "founder.access_needs":            { "source": "FOUNDER", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:01:00Z" },
+
+    "venture.name":                    { "source": "FOUNDER",      "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:20:00Z" },
+    "venture.one_liner":               { "source": "AI_EXTRACTED", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:22:00Z", "note": "Drawn from the founder's own words, then read back and confirmed." },
+    "venture.problem_statement":       { "source": "AI_EXTRACTED", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:22:00Z" },
+    "venture.stage":                   { "source": "FOUNDER",      "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:24:00Z" },
+    "venture.incorporated":            { "source": "FOUNDER",      "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:24:00Z" },
+    "venture.project_duration_months": { "source": "FOUNDER",      "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:26:00Z" },
+
+    "impact.beneficiary_group":        { "source": "AI_EXTRACTED", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:30:00Z" },
+    "impact.beneficiary_count_est":    { "source": "AI_ESTIMATED", "confirmed_by_founder": false, "updated_at": "2026-09-09T09:31:00Z", "note": "Estimated from MSF prevalence figures. You have not confirmed this — funders will ask." },
+    "impact.impact_description":       { "source": "AI_EXTRACTED", "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:32:00Z" },
+    "impact.beneficiary_validation":   { "source": "FOUNDER",      "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:34:00Z" },
+    "impact.sso_partnership":          { "source": "FOUNDER",      "confirmed_by_founder": true,  "updated_at": "2026-09-09T09:34:00Z" },
+
+    "memberships.raise_member":        { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:36:00Z" },
+    "memberships.amp_relationship":    { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:36:00Z" },
+
+    "funding.amount_sought_sgd":       { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:38:00Z" },
+    "funding.other_govt_funding":      { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:38:00Z" },
+    "funding.can_match_capital_sgd":   { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:39:00Z" },
+
+    "readiness.has_pitch_deck":            { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:40:00Z" },
+    "readiness.has_acra_profile":          { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:40:00Z" },
+    "readiness.has_management_accounts":   { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:40:00Z" },
+    "readiness.has_financial_projections": { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:40:00Z" },
+    "readiness.has_team_resumes":          { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:40:00Z" },
+    "readiness.team_size":                 { "source": "FOUNDER", "confirmed_by_founder": true, "updated_at": "2026-09-09T09:41:00Z" }
+  },
+
+  "stage_progress": [
+    { "grant_id": "raise-vfg-youth", "stage_id": "submit_application", "status": "NOT_STARTED", "updated_at": "2026-09-09T09:42:00Z" }
+  ],
+
+  "elicit_progress": {
+    "completed_step_ids": ["welcome", "about_you", "your_idea", "who_you_help", "where_you_are"],
+    "current_step_id": "what_you_have"
+  }
+}

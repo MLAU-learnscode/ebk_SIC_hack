@@ -20,6 +20,7 @@ import { createEmptyProfile } from '../src/lib/profile';
 
 const CASES = './fixtures/eligibility-cases.json';
 const RULES_DIR = './data/rules';
+const DEMO_FOUNDER = './fixtures/demo-founder.json';
 const NOW = '2026-09-09T10:00:00+08:00';
 
 interface NormalisedCase {
@@ -32,8 +33,10 @@ interface NormalisedCase {
 }
 
 /** THE ONLY PART THAT KNOWS C'S FILE LAYOUT. Adjust here if the shape differs. */
-function adaptCase(raw: Record<string, unknown>, i: number): NormalisedCase {
-  const answers = (raw.profile ?? raw.answers ?? raw.input ?? {}) as Record<string, unknown>;
+function adaptCase(raw: Record<string, unknown>, i: number, demoAnswers: Record<string, unknown>): NormalisedCase {
+  const answers = (
+    raw.profile_ref === 'demo-founder' ? demoAnswers : raw.profile ?? raw.answers ?? raw.input ?? {}
+  ) as Record<string, unknown>;
 
   // C's cases may hold either a bare `answers` tree or a whole FounderProfile.
   const base = createEmptyProfile(NOW);
@@ -42,13 +45,20 @@ function adaptCase(raw: Record<string, unknown>, i: number): NormalisedCase {
     ? ({ ...base, ...(answers as object) } as FounderProfile)
     : ({ ...base, answers: deepMerge(base.answers, answers) } as FounderProfile);
 
+  // C's `expect` is an object ({ state, blocker_fields, unknown_fields, ... }), not a bare string.
+  const expect = (raw.expect ?? {}) as Record<string, unknown>;
+
   return {
     name: String(raw.name ?? raw.id ?? raw.description ?? `case ${i + 1}`),
     grant_id: String(raw.grant_id ?? raw.grant ?? ''),
     profile,
-    expected_state: (raw.expected_state ?? raw.expect ?? raw.expected) as EligibilityStatus,
-    expected_blocker_count: raw.expected_blockers as number | undefined,
-    expected_unknown_count: raw.expected_unknowns as number | undefined,
+    expected_state: (raw.expected_state ?? expect.state ?? raw.expected) as EligibilityStatus,
+    expected_blocker_count: (raw.expected_blockers ?? (expect.blocker_fields as unknown[] | undefined)?.length) as
+      | number
+      | undefined,
+    expected_unknown_count: (raw.expected_unknowns ?? (expect.unknown_fields as unknown[] | undefined)?.length) as
+      | number
+      | undefined,
   };
 }
 
@@ -86,6 +96,10 @@ function main(): void {
     process.exit(0);
   }
 
+  const demoAnswers = (
+    existsSync(DEMO_FOUNDER) ? (JSON.parse(readFileSync(DEMO_FOUNDER, 'utf8')).answers ?? {}) : {}
+  ) as Record<string, unknown>;
+
   const parsed = JSON.parse(readFileSync(CASES, 'utf8')) as unknown;
   const rawCases = (Array.isArray(parsed) ? parsed : (parsed as { cases?: unknown[] }).cases ?? []) as Record<
     string,
@@ -94,7 +108,7 @@ function main(): void {
 
   let failures = 0;
   for (const [i, raw] of rawCases.entries()) {
-    const c = adaptCase(raw, i);
+    const c = adaptCase(raw, i, demoAnswers);
     const rule = rules.get(c.grant_id);
     if (!rule) {
       console.log(`SKIP  ${c.name} — no rule loaded for "${c.grant_id}"`);

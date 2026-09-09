@@ -1,0 +1,15 @@
+{
+  "_comment": "C's requested additions to profile.schema.json. Kept in a SEPARATE file so B's frozen contract is never edited by C — B merges these in and this file shrinks to empty. The validator accepts these field paths so the build stays green, but warns on every one until they land in the real schema.",
+  "_requested_by": "C",
+  "_date": "2026-09-09",
+  "_status": "All three requested fields shipped by B in profile.schema.json v1.0.1 (merged from main into c/rules on 2026-09-09). pending_fields is now empty.",
+
+  "pending_fields": {},
+
+  "naming_note": {
+    "field": "impact.sso_partnership",
+    "issue": "raiSE's published wording is VWO (Voluntary Welfare Organisation) / SSA (Social Service Agency). An SSO is a Social Service Office — a different kind of entity. CONTEXT.md §5 carries the same error, so this is inherited, not B's mistake.",
+    "recommendation": "DO NOT rename the field. It is frozen, A is already building against it, and a rename on Day 3 costs more than it buys. Fix the founder-facing LABEL to say 'Voluntary Welfare Organisation (VWO)' and leave the key alone. Rename after the hackathon.",
+    "impact_if_ignored": "We would say 'SSO partnership' on stage to judges who know the sector. The label fix is a one-line change in A's copy."
+  }
+}
