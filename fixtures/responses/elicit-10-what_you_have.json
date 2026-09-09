@@ -48,6 +48,6 @@
       "note": null
     }
   },
-  "confirm_back": "CVs yes, everything else not yet. That's the normal starting point — we'll show you which ones actually block an application and which can wait.",
+  "confirm_back": "CVs yes, everything else not yet. That is the normal starting point — next we will show you which of these actually block an application and which can wait.",
   "next_step_id": null
 }

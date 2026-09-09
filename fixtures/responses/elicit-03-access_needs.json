@@ -4,7 +4,8 @@
     "founder": {
       "access_needs": [
         "PLAIN_LANGUAGE",
-        "VOICE_INPUT"
+        "VOICE_INPUT",
+        "LARGE_TEXT"
       ]
     }
   },
@@ -16,6 +17,6 @@
       "note": null
     }
   },
-  "confirm_back": "Plain language and voice input, on. You can change these any time from the top of the page.",
+  "confirm_back": "Plain language, voice input and larger text are on. You can change these any time from the top of the page.",
   "next_step_id": "venture_idea"
 }

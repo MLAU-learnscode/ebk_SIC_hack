@@ -2,9 +2,9 @@
   "step_id": "venture_idea",
   "patch": {
     "venture": {
-      "name": "Quiet Hours",
-      "one_liner": "A neighbourhood cafe staffed and run by deaf and hard-of-hearing baristas.",
-      "problem_statement": "Deaf and hard-of-hearing young people in Singapore are shut out of entry-level hospitality work, because hiring assumes spoken order-taking. Quiet Hours removes that assumption from the job rather than asking the worker to work around it."
+      "name": "Sightlines",
+      "one_liner": "Disability-awareness training for employers, designed and delivered by people who are losing their sight.",
+      "problem_statement": "Young adults newly diagnosed with sight loss in Singapore lose their footing at work at exactly the moment employers are least equipped to keep them. Sightlines turns that lived experience into training the employer pays for, delivered by the people it is about."
     }
   },
   "field_meta_patch": {
@@ -27,6 +27,6 @@
       "note": "We wrote this from what you told us. Change anything that sounds off."
     }
   },
-  "confirm_back": "Here's how we'd say it: \"Quiet Hours is a neighbourhood cafe staffed and run by deaf and hard-of-hearing baristas.\" Does that sound like your idea?",
+  "confirm_back": "Here is how we would say it: \"Sightlines is disability-awareness training for employers, designed and delivered by people who are losing their sight.\" Does that sound like your idea?",
   "next_step_id": "who_it_helps"
 }

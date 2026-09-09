@@ -1,8 +1,8 @@
 [
   {
     "step_id": "who_you_are",
-    "question": "First up — what should we call you, and how old are you?",
-    "why": "Some funding is only open to founders aged 18 to 35, so this tells us early what you can go for.",
+    "question": "First — what should we call you, and how old are you?",
+    "why": "Some funding is only open to founders in a certain age range, so this tells us early what you can go for.",
     "input_kind": "SHORT_TEXT",
     "writes_fields": [
       "founder.full_name",
@@ -13,17 +13,17 @@
   },
   {
     "step_id": "citizenship",
-    "question": "Are you a Singapore citizen or PR?",
-    "why": "Both raiSE and Startup SG Founder need the main applicant to be a citizen or PR.",
+    "question": "Are you a Singapore citizen or PR, and living in Singapore?",
+    "why": "All three schemes we track need the main applicant to be a citizen or PR.",
     "input_kind": "SINGLE_CHOICE",
     "choices": [
       {
         "value": "SG",
-        "label": "Singapore citizen"
+        "label": "Singapore citizen, living here"
       },
       {
         "value": "PR",
-        "label": "Permanent resident",
+        "label": "Permanent resident, living here",
         "funder_term": "PR"
       },
       {
@@ -79,7 +79,7 @@
   {
     "step_id": "venture_idea",
     "question": "Tell us about your idea, in your own words.",
-    "why": "However it comes out is fine. We'll tidy it up and show you what we wrote.",
+    "why": "However it comes out is fine. We'll tidy it up and show you exactly what we wrote.",
     "input_kind": "FREE_TEXT",
     "writes_fields": [
       "venture.name",
@@ -92,7 +92,7 @@
   {
     "step_id": "who_it_helps",
     "question": "Who does this help, and roughly how many people?",
-    "why": "Social enterprise funders ask for this in almost every form. A rough number is fine for now.",
+    "why": "Social enterprise funders ask this in almost every form. A rough number is fine for now.",
     "input_kind": "FREE_TEXT",
     "writes_fields": [
       "impact.beneficiary_group",
@@ -104,8 +104,8 @@
   },
   {
     "step_id": "venture_stage",
-    "question": "Where are you up to?",
-    "why": "Some grants are only for businesses that have already registered. Most are not — being early is fine.",
+    "question": "Where are you up to, and how long would your first phase run?",
+    "why": "Some grants need a registered business. Most do not — being early is fine, and one of them caps the project length.",
     "input_kind": "SINGLE_CHOICE",
     "choices": [
       {
@@ -132,8 +132,8 @@
   },
   {
     "step_id": "founding_history",
-    "question": "Have you started and registered a business before?",
-    "why": "Startup SG Founder is only for first-time founders, so a yes here changes what we show you.",
+    "question": "Have you ever registered a company before? Even one that never traded.",
+    "why": "One scheme is strictly for first-time founders, and a company you registered years ago still counts.",
     "input_kind": "YES_NO",
     "writes_fields": [
       "founder.first_time_founder",
@@ -145,8 +145,8 @@
   },
   {
     "step_id": "support_network",
-    "question": "Are you working with any organisation on this yet?",
-    "why": "Membership and partnerships are the most common thing standing between founders and a grant — and the easiest to fix.",
+    "question": "Is any organisation backing you yet?",
+    "why": "Membership and partnerships are the most common thing standing between a founder and a grant — and the most fixable.",
     "input_kind": "MULTI_CHOICE",
     "choices": [
       {
@@ -163,6 +163,11 @@
         "value": "VWO_PARTNER",
         "label": "A registered charity or non-profit backs us",
         "funder_term": "VWO partnership"
+      },
+      {
+        "value": "BENEFICIARY_EVIDENCE",
+        "label": "I can show who I help and why they need it",
+        "funder_term": "beneficiary validation"
       },
       {
         "value": "NONE",
@@ -195,7 +200,7 @@
   {
     "step_id": "what_you_have",
     "question": "Which of these do you already have?",
-    "why": "This is the paperwork funders ask for. Most founders have none of it at this stage — that's normal, and we'll show you what to do about each one.",
+    "why": "This is the paperwork funders ask for. Most founders have none of it yet — that's normal, and we'll show you what to do about each one.",
     "input_kind": "MULTI_CHOICE",
     "choices": [
       {

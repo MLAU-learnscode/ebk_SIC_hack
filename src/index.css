@@ -1,0 +1,261 @@
+/*
+ * index.css — the design system.
+ * Owner: A.
+ *
+ * Accessibility is a hard requirement here, not a polish pass (CONTEXT.md §11).
+ * Three rules this file exists to enforce:
+ *   1. Colour is never the only signal. Every status carries a shape and a word.
+ *   2. Focus is always visible, at 3:1 against both the element and the page.
+ *   3. Nothing moves, times out, or advances on its own.
+ */
+
+/* ── tokens ─────────────────────────────────────────────────────────────── */
+:root {
+  --ink:          #123a47;
+  --ink-soft:     #2c5566;
+  --muted:        #5c6f77;
+  --line:         #d5dfe2;
+  --line-strong:  #b6c6cc;
+  --bg:           #ffffff;
+  --tint:         #edf2f3;
+  --tint-warm:    #f7eee1;
+  --tint-green:   #e4efea;
+  --tint-red:     #f6ecec;
+
+  --teal:         #1c7293;
+  --teal-dark:    #145a75;
+
+  /* Text-safe variants: all ≥ 4.5:1 on white. The lighter siblings are for
+     borders and fills only, never for text. */
+  --green:        #1b6146;
+  --green-line:   #2e7d5b;
+  --amber:        #8a5a0b;
+  --amber-line:   #c77d22;
+  --red:          #8a3a3a;
+  --red-line:     #a85757;
+
+  --radius:       10px;
+  --radius-sm:    6px;
+  --shadow:       0 1px 2px rgba(18, 58, 71, 0.06), 0 4px 14px rgba(18, 58, 71, 0.06);
+
+  --step:         1rem;      /* scales with the text-size control */
+  --measure:      34rem;     /* max line length for body copy */
+
+  --font-body:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-head:    Georgia, "Times New Roman", serif;
+}
+
+/* Larger text, set from the intake's access-needs step. Scales everything that
+   is sized in --step, so layout stays intact instead of overlapping. */
+html[data-text-size='large']  { --step: 1.2rem; }
+html[data-text-size='larger'] { --step: 1.4rem; }
+
+/* ── reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step);
+  line-height: 1.6;
+}
+h1, h2, h3 { font-family: var(--font-head); line-height: 1.2; margin: 0; font-weight: 700; }
+p { margin: 0; }
+button, input, textarea { font: inherit; color: inherit; }
+
+/* ── focus: always visible, never removed ───────────────────────────────── */
+:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+/* Keyboard users get the ring; mouse users don't get a stuck one. Focus is
+   never suppressed outright. */
+:focus:not(:focus-visible) { outline: none; }
+
+/* ── motion: off by default for anyone who asked, or whose OS asked ─────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+html[data-motion='reduced'] *, html[data-motion='reduced'] *::before {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* ── skip link ──────────────────────────────────────────────────────────── */
+.skip {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--ink); color: #fff;
+  padding: 0.75em 1.25em; z-index: 100; border-radius: 0 0 var(--radius) 0;
+}
+.skip:focus { left: 0; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── layout ─────────────────────────────────────────────────────────────── */
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+
+.topbar {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+.topbar .brand {
+  font-family: var(--font-head); font-weight: 700; font-size: 1.1em;
+  margin-right: auto; color: var(--ink); text-decoration: none;
+}
+.topbar .tools { display: flex; align-items: center; gap: 0.5rem; }
+
+main { flex: 1; padding: 2rem 1.5rem 4rem; }
+.page        { max-width: 64rem; margin: 0 auto; }
+.page-narrow { max-width: 44rem; margin: 0 auto; }
+/* Body copy is capped for readability, but stays LEFT-ALIGNED to the same
+   gutter as the cards below it. Centring a narrow column inside a wide one
+   makes the page look broken to everyone and misleads anyone zoomed in. */
+.prose { max-width: var(--measure); }
+
+.stack > * + * { margin-top: 1rem; }
+.stack-lg > * + * { margin-top: 1.75rem; }
+
+.lede { font-size: 1.05em; color: var(--ink-soft); max-width: var(--measure); }
+.small { font-size: 0.85em; color: var(--muted); }
+.muted { color: var(--muted); }
+
+/* ── buttons ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5em;
+  min-height: 2.9em;          /* ≥44px at default text size */
+  padding: 0.6em 1.3em;
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  background: var(--teal); color: #fff;
+  font-weight: 600; cursor: pointer;
+  transition: background 120ms ease;
+}
+.btn:hover { background: var(--teal-dark); }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.btn-secondary { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn-secondary:hover { background: var(--tint); }
+.btn-ghost { background: transparent; color: var(--teal); border-color: transparent; padding-inline: 0.5em; }
+.btn-ghost:hover { background: var(--tint); }
+.btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+/* ── cards ──────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  box-shadow: var(--shadow);
+}
+.card-flat { box-shadow: none; background: var(--tint); }
+
+/* ── choices: big targets, label is the target ──────────────────────────── */
+.choice-list { display: grid; gap: 0.6rem; }
+.choice {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  padding: 0.9rem 1.1rem;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--bg);
+}
+.choice:hover { border-color: var(--line-strong); background: var(--tint); }
+.choice input { margin: 0.25em 0 0 0; width: 1.15em; height: 1.15em; accent-color: var(--teal); flex: none; }
+.choice:has(input:checked) { border-color: var(--teal); background: var(--tint); }
+.choice:has(input:focus-visible) { outline: 3px solid var(--teal); outline-offset: 3px; }
+.choice .choice-label { font-weight: 600; }
+.choice .choice-term { display: block; font-size: 0.82em; color: var(--muted); font-weight: 400; margin-top: 0.15em; }
+
+.field {
+  width: 100%; padding: 0.75em 0.9em;
+  border: 2px solid var(--line-strong); border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+.field:focus-visible { border-color: var(--teal); }
+textarea.field { min-height: 8em; resize: vertical; }
+
+/* ── progress ───────────────────────────────────────────────────────────── */
+.progress { display: flex; align-items: center; gap: 0.75rem; }
+.progress-track {
+  flex: 1; height: 0.5rem; background: var(--tint);
+  border: 1px solid var(--line); border-radius: 999px; overflow: hidden;
+}
+.progress-fill { height: 100%; background: var(--teal); }
+
+/* ── status: colour + shape + word, never colour alone ──────────────────── */
+.status {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  padding: 0.3em 0.8em 0.3em 0.6em;
+  border-radius: 999px; font-size: 0.85em; font-weight: 700;
+  border: 2px solid;
+}
+.status .glyph { font-size: 1em; line-height: 1; }
+.status-now        { color: var(--green); border-color: var(--green-line); background: var(--tint-green); }
+.status-after      { color: var(--amber); border-color: var(--amber-line); background: var(--tint-warm); }
+.status-not        { color: var(--red);   border-color: var(--red-line);   background: var(--tint-red); }
+
+.grant-card { border-left: 6px solid var(--line); }
+.grant-card.is-now   { border-left-color: var(--green-line); }
+.grant-card.is-after { border-left-color: var(--amber-line); }
+.grant-card.is-not   { border-left-color: var(--red-line); }
+
+.criteria { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
+.criteria li { display: flex; gap: 0.6em; align-items: flex-start; }
+.criteria .mark { flex: none; font-weight: 700; width: 1.2em; text-align: center; }
+.mark-met     { color: var(--green); }
+.mark-unmet   { color: var(--amber); }
+.mark-unknown { color: var(--muted); }
+.mark-fatal   { color: var(--red); }
+
+.steps { margin: 0; padding-left: 1.3rem; display: grid; gap: 0.55rem; }
+.steps li::marker { font-weight: 700; color: var(--teal); }
+.steps .dur { color: var(--muted); font-size: 0.85em; }
+
+/* ── the seam: gap flags ────────────────────────────────────────────────── */
+mark.gap {
+  background: var(--tint-warm);
+  border-bottom: 2px dotted var(--amber-line);
+  color: inherit;
+  padding: 0.05em 0.1em;
+  cursor: help;
+}
+mark.gap::after {
+  content: ' ⚑';
+  font-size: 0.8em;
+  color: var(--amber);
+}
+.seam-key { display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: 0.85em; color: var(--muted); }
+
+/* ── notices ────────────────────────────────────────────────────────────── */
+.notice {
+  border: 1px solid var(--line); border-left: 5px solid var(--teal);
+  background: var(--tint); border-radius: var(--radius-sm);
+  padding: 0.9rem 1.1rem;
+}
+.notice-warn { border-left-color: var(--amber-line); background: var(--tint-warm); }
+.notice-title { font-weight: 700; margin-bottom: 0.2em; }
+
+/* ── source line ────────────────────────────────────────────────────────── */
+.source { font-size: 0.8em; color: var(--muted); }
+.source a { color: var(--teal-dark); }
+
+/* ── misc ───────────────────────────────────────────────────────────────── */
+.grid-2 { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 56rem) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+.rec { display: flex; align-items: center; gap: 0.5em; }
+.rec .dot { width: 0.7em; height: 0.7em; border-radius: 999px; background: var(--red-line); flex: none; }
+
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1.25rem; margin: 0; }
+dl.kv dt { color: var(--muted); font-size: 0.9em; }
+dl.kv dd { margin: 0; }
